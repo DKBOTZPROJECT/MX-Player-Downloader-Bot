@@ -1,0 +1,7 @@
+pyrofork
+TgCrypto
+requests
+aiohttp
+dkbotzdb
+pymongo
+pytz
