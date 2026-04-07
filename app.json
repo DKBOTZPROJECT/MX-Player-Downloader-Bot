@@ -1,0 +1,40 @@
+{
+  "name": "MX Player Downloader Bot",
+  "description": "A Powerful Telegram Bot To Download Videos From MX Player With High Speed By @DKBOTZ",
+  "logo": "https://files.catbox.moe/2p9kkv.png",
+  "keywords": [
+    "telegram",
+    "bot",
+    "mxplayer",
+    "downloader",
+    "pyrogram",
+    "ffmpeg",
+    "dkbotz",
+    "dkbotzpro"
+  ],
+  "repository": "https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot",
+  "success_url": "https://t.me/MX_Player_Downloader_Bot",
+  "stack": "container",
+  "env": {
+    "API_ID": {
+      "description": "Your Telegram API ID. Get From https://my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API Hash. Get From https://my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Your Telegram Bot Token. Get From @BotFather On Telegram",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ]
+}
