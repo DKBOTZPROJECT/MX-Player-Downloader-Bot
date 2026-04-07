@@ -121,3 +121,19 @@ If You Face Any Issues Or Want New Features, You Can:
 
 ---
 
+## ⭐ Support The Project
+
+If You Like This Project, Don’t Forget To ⭐ Star The Repository
+It Helps A Lot And Motivates For More Updates 🚀
+
+---
+
+## 💳 Credits
+
+* 👨‍💻 Developer: [𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬](https://t.me/DKBOTZHELP)
+* 📢 Support Channel: [𝐃𝐊𝐁𝐎𝐓𝐙](https://t.me/DKBOTZ)
+* 💬 Support Group: [𝐃𝐊𝐁𝐎𝐓𝐙 𝐒𝐔𝐏𝐏𝐎𝐑𝐓](https://t.me/DKBOTZSUPPORT)
+
+📌 Report Issues To Developer Or Support Group
+
+---
