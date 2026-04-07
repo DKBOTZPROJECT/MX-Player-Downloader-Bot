@@ -27,6 +27,9 @@ async def mx_player_request_api(url):
         await asyncio.sleep(1)
     return False
 
+def is_mxplayer_url(url):
+    return "mxplayer.in" in url or "mxplay.com" in url
+
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
     await message.reply_text("🚀 Welcome To MX Player Downloader Bot\n\n🔥 Experience Lightning Fast Video Extraction From MX Player\n\n📥 Simply Send A Valid MX Player Link And Let The Bot Handle Everything Automatically\n\n💡 Type /help To Explore Features")
