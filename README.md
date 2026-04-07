@@ -22,6 +22,49 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 </p>
 </details>
 
+<details><summary>💻 Deploy On VPS (Manual Setup)</summary>
+<p>
+#### 📌 Step 1: Update System
+
+```bash
+apt update && apt upgrade -y
+```
+
+#### 📌 Step 2: Install Required Packages
+
+```bash
+apt install python3 python3-pip ffmpeg git -y
+```
+
+#### 📌 Step 3: Clone Repository
+
+```bash
+git clone https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot
+cd MX-Player-Downloader-Bot
+```
+
+#### 📌 Step 4: Install Requirements
+
+```bash
+pip3 install -r requirements.txt
+```
+
+#### 📌 Step 5: Set Environment Variables
+
+```bash
+export API_ID=your_api_id
+export API_HASH=your_api_hash
+export BOT_TOKEN=your_bot_token
+```
+
+#### 📌 Step 6: Run Bot
+
+```bash
+python3 main.py
+```
+</p>
+</details>
+
 ## 💡 How To Use
 
 1. Copy The MX Player Video Link
