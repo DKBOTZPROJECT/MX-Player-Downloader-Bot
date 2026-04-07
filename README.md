@@ -11,6 +11,17 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 * 🧠 Smart Error Handling & Retry System
 * 📊 Clean And User-Friendly Experience
 
+## Deploy Option
+
+<details><summary>Deploy To Heroku</summary>
+<p>
+<br>
+<a href="https://heroku.com/deploy?template=https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot">
+  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy To Heroku">
+</a>
+</p>
+</details>
+
 ## 💡 How To Use
 
 1. Copy The MX Player Video Link
