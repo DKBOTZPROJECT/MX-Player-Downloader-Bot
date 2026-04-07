@@ -32,7 +32,7 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    await message.reply_text("🚀 Welcome To MX Player Downloader Bot\n\n🔥 Experience Lightning Fast Video Extraction From MX Player\n\n📥 Simply Send A Valid MX Player Link And Let The Bot Handle Everything Automatically\n\n💡 Type /help To Explore Features")
+    await message.reply_text("<b>🚀 Welcome To MX Player Downloader Bot\n\n<i>⚡️ Use Me To Download MX Player Movies And Shows\n\n✨ Just Send Me A Valid MX Player Link And See The Magic</i>\n\n💡 Send /help For More Information</b>")
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
