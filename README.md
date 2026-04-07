@@ -11,6 +11,17 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 * 🧠 Smart Error Handling & Retry System
 * 📊 Clean And User-Friendly Experience
 
+---
+## ⚙️ Environment Variables
+
+| Variable  | Description                      |
+| --------- | -------------------------------- |
+| API_ID    | Get From https://my.telegram.org |
+| API_HASH  | Get From https://my.telegram.org |
+| BOT_TOKEN | Get From @BotFather              |
+
+---
+
 ## Deploy Option
 
 <details><summary>Deploy To Heroku</summary>
@@ -24,6 +35,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 
 <details><summary>💻 Deploy On VPS (Manual Setup)</summary>
 <p>
+
 #### 📌 Step 1: Update System
 
 ```bash
@@ -60,10 +72,12 @@ export BOT_TOKEN=your_bot_token
 #### 📌 Step 6: Run Bot
 
 ```bash
-python3 main.py
+bash start.sh
 ```
 </p>
 </details>
+
+---
 
 ## 💡 How To Use
 
@@ -71,4 +85,3 @@ python3 main.py
 2. Send It To The Bot
 3. Wait A Few Seconds
 4. Get Your Video Ready To Download 🎉
-
