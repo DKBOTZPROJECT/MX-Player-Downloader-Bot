@@ -1,4 +1,6 @@
 import os
+import requests
+import asyncio
 from pyrogram import Client as DKBOTZ, filters
 
 API_ID = int(os.environ.get("API_ID", ""))
@@ -13,6 +15,17 @@ DKBOTZBOT = DKBOTZ(
     workers=999,
 )
 
+async def mx_player_request_api(url):
+    api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
+    for _ in range(3):
+        try:
+            response = requests.get(api_url, timeout=10)
+            if response.status_code == 200:
+                return response.json()
+        except:
+            pass
+        await asyncio.sleep(1)
+    return False
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
