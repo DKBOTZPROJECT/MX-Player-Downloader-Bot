@@ -85,3 +85,39 @@ bash start.sh
 2. Send It To The Bot
 3. Wait A Few Seconds
 4. Get Your Video Ready To Download 🎉
+
+---
+
+## 🐞 Report Issues / Request Features
+
+If You Face Any Issues Or Want New Features, You Can:
+
+### 📢 Report On Telegram
+
+* 👨‍💻 Developer: [𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬](https://t.me/DKBOTZHELP)
+* 📢 Support Channel: [𝐃𝐊𝐁𝐎𝐓𝐙](https://t.me/DKBOTZ)
+* 💬 Support Group: [𝐃𝐊𝐁𝐎𝐓𝐙 𝐒𝐔𝐏𝐏𝐎𝐑𝐓](https://t.me/DKBOTZSUPPORT)
+
+<details><summary>🛠️ Report On GitHub (Recommended)</summary>
+<p>
+
+👉 Go To: [Github Issues](https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot/issues)
+
+#### 📌 While Reporting Issue, Include:
+
+* Full Error Logs
+* Screenshot (If Possible)
+* Proper Description Of Problem
+* Steps To Reproduce Issue
+
+#### 💡 For Feature Request:
+
+* Clearly Explain Feature Idea
+* Provide Use Case
+* Add Example If Possible
+<br>
+</p>
+</details>
+
+---
+
