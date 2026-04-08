@@ -2,6 +2,7 @@ import os
 import requests
 import asyncio
 from pyrogram import Client as DKBOTZ, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 API_ID = int(os.environ.get("API_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
@@ -15,7 +16,7 @@ DKBOTZBOT = DKBOTZ(
     workers=999,
 )
 
-### All Message Start
+### All Message Start And Button
 
 START_MESSAGE = """<b>👋 Hello {mention},
 
@@ -48,7 +49,15 @@ HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
 • Only Valid MX Player Links Are Supported ❗
 • Processing Time Depends On File Size And Server Speed ⏳</b>"""
 
-### All Messages End
+START_BUTTONS = InlineKeyboardMarkup([
+    [InlineKeyboardButton("📖 Help", callback_data="dkbotzmsg_help")]
+])
+
+HELP_BUTTONS = InlineKeyboardMarkup([
+    [InlineKeyboardButton("🏠 Back", callback_data="dkbotzmsg_start")]
+])
+
+### All Messages End And Button
 
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
@@ -85,11 +94,21 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention))
+    await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention), reply_markup=HELP_BUTTONS)
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
-    await message.reply_text(HELP_MESSAGE)
+    await message.reply_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS)
+
+@DKBOTZBOT.on_callback_query(filters.regex("^dkbotzmsg_"))
+async def callback_handler(client, query):
+    data = query.data
+
+    if data == "dkbotzmsg_start":
+        await query.message.edit_text(START_MESSAGE.format(mention=query.from_user.mention), reply_markup=START_BUTTONS)
+
+    elif data == "dkbotzmsg_help":
+        await query.message.edit_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS)
 
 @DKBOTZBOT.on_message(filters.text & filters.private)
 async def dkbotz_handle_link(client, message):
