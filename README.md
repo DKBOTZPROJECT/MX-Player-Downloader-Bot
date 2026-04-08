@@ -20,6 +20,24 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 | API_HASH  | Get From https://my.telegram.org |
 | BOT_TOKEN | Get From @BotFather              |
 
+<details>
+<summary>🧩 Optional Variables</summary>
+
+<br>
+
+| Variable         | Description                                        |
+| ---------------- | -------------------------------------------------- |
+| OWNER_USERNAME   | Bot Owner Username (default: DKBOTZHELP)           |
+| UPI_ID           | Your UPI ID For Payments (default: dkbotzpro@ybl)  |
+| CHANNEL_USERNAME | Your Channel Username Without @ (default: DKBOTZ)  |
+| LOG_CHANNEL      | Private Channel ID For Logs (must start with -100) |
+| FSUB_CHANNEL     | Force Subscribe Channel ID (must start with -100)  |
+| ADMINS           | Space Separated Admin User IDs                     |
+| DATABASE_URL     | MongoDB Database URL                               |
+| DATABASE_NAME    | Database Name (default: DKBOTZMXDOWNLOADER)        |
+
+</details>
+
 ---
 
 ## Deploy Option
@@ -115,7 +133,7 @@ If You Face Any Issues Or Want New Features, You Can:
 * Clearly Explain Feature Idea
 * Provide Use Case
 * Add Example If Possible
-<br>
+
 </p>
 </details>
 
