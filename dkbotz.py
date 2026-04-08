@@ -27,6 +27,24 @@ async def mx_player_request_api(url):
         await asyncio.sleep(1)
     return False
 
+def full_title_builder(dkbotz_mx_data):
+    title = dkbotz_mx_data.get("show_title", "Unknown")
+    episode = dkbotz_mx_data.get("seo_title", "")
+    season = dkbotz_mx_data.get("season", "")
+
+    full_title = ""
+
+    if title:
+        full_title += str(title)
+
+    if season:
+        full_title += f" {season}"
+
+    if episode:
+        full_title += f" - {episode}"
+
+    return full_title.strip()
+
 def is_mxplayer_url(url):
     return "mxplayer.in" in url or "mxplay.com" in url
 
@@ -72,13 +90,11 @@ async def dkbotz_handle_link(client, message):
         await checking.edit_text("<b>❌ Download Link Not Found\n\nTry Another Content Or API Issues\nContact Support</b>")
         return
 
-    title = dkbotz_mx_data.get("show_title", "Unknown")
-    episode = dkbotz_mx_data.get("seo_title", "")
-    season = dkbotz_mx_data.get("season", "")
+    full_title = full_title_builder(dkbotz_mx_data)
     description = dkbotz_mx_data.get("description", "")
     thumb = dkbotz_mx_data.get("thumbnail", "")
 
-    text = f"<b>🎬 Title:</b> {title}\n<b>📺 Episode:</b> {episode}\n<b>📦 Season:</b> {season}\n\n<b>📝 Description:</b>\n{description[:300]}...\n\n<b>🔗 Download URL:</b>\n{download_url}"
+    text = f"<b>🎬 Full Title:</b> {title}\n\n<b>📝 Description:</b>\n{description[:300]}...\n\n<b>🔗 Download URL:</b>\n{download_url}"
 
     try:
         if thumb:
