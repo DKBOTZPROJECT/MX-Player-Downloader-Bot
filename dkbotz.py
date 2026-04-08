@@ -27,6 +27,27 @@ START_MESSAGE = """<b>👋 Hello {mention},
 
 💡 Send /help For More Information 📖</b>"""
 
+HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
+
+🎯 Supported Tasks:
+• MX Player Video Download 🎬
+
+⚙️ How It Works:
+1️⃣ Send MX Player Video Link 🔗
+2️⃣ Select Quality 🎞️
+3️⃣ Processing Begins Instantly ⚡
+4️⃣ Video Delivered Directly To You 📥
+
+🚀 Features:
+• Ultra Fast Download Engine ⚡
+• Automatic Link Detection 🔍
+• Optimized Upload System 📤
+• Smart Error Handling 🛠️
+
+⚠️ Note:
+• Only Valid MX Player Links Are Supported ❗
+• Processing Time Depends On File Size And Server Speed ⏳</b>"""
+
 ### All Messages End
 
 async def mx_player_request_api(url):
@@ -68,7 +89,7 @@ async def start_cmd(client, message):
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
-    await message.reply_text("📖 Advanced Help Guide\n\n🎯 Supported Tasks:\n• MX Player Video Download\n\n⚙️ How It Works:\n1. Send MX Player Video Link\n2. Select Quality\n3. Processing Begins Instantly\n4. Video Delivered Directly To You\n\n🚀 Features:\n• Ultra Fast Download Engine\n• Automatic Link Detection\n• Optimized Upload System\n• Smart Error Handling\n\n⚠️ Note:\n• Only Valid MX Player Links Are Supported\n• Processing Time Depends On File Size And Server Speed")
+    await message.reply_text(HELP_MESSAGE)
 
 @DKBOTZBOT.on_message(filters.text & filters.private)
 async def dkbotz_handle_link(client, message):
