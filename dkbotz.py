@@ -3,14 +3,7 @@ import requests
 import asyncio
 from pyrogram import Client as DKBOTZ, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-API_ID = int(os.environ.get("API_ID", ""))
-API_HASH = os.environ.get("API_HASH", "")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "DKBOTZHELP")
-UPI_ID = os.environ.get("UPI_ID", "dkbotzpro@ybl")
-CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME", "DKBOTZ")
-CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
+from Config import *
 
 DKBOTZBOT = DKBOTZ(
     "dkbotz_mx_player_bot",
