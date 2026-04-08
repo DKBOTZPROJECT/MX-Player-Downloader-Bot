@@ -7,6 +7,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 API_ID = int(os.environ.get("API_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "DKBOTZHELP")
+UPI_ID = os.environ.get("UPI_ID", "dkbotzpro@ybl")
 CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME", "DKBOTZ")
 CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
 
@@ -50,6 +52,38 @@ HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
 ⚠️ Note:
 • Only Valid MX Player Links Are Supported ❗
 • Processing Time Depends On File Size And Server Speed ⏳</b>"""
+
+ABOUT_MESSAGE = f"""<b>ℹ️ 𝐀𝐛𝐨𝐮𝐭 𝐓𝐡𝐢𝐬 𝐁𝐨𝐭 🤖</b>
+
+<b>📝 𝐋𝐚𝐧𝐠𝐮𝐚𝐠𝐞 :</b> <a href='https://www.python.org'>𝐏𝐲𝐭𝐡𝐨𝐧</a>
+
+<b>🧰 𝐅𝐫𝐚𝐦𝐞𝐖𝐨𝐫𝐤 :</b> <a href=https://github.com/Mayuri-Chan/pyrofork'>𝐏𝐲𝐫𝐨𝐟𝐨𝐫𝐤</a>
+
+<b>👨‍💻 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫 :</b> <a href='https://t.me/{OWNER_USERNAME}'>𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬</a>
+
+<b>📢 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 :</b> <a href='{CHANNEL_URL}'>𝐂𝐡𝐚𝐧𝐧𝐞𝐥</a>"""
+
+DONATE_MESSAGE = f"""<b>💗 Thank You For Showing Interest In Supporting Us</b>
+
+<i>Your Small Contribution Helps Keep This Bot Running Smoothly And Continuously.</i>
+━━━━━━━━━━━━━━━━━━
+<b>💸 You Can Donate Any Amount:</b>
+
+₹20 • ₹30 • ₹50 • ₹70 • ₹100 • ₹200 😊
+━━━━━━━━━━━━━━━━━━
+<b>📨 Payment Methods:</b>
+• Google Pay
+• Paytm
+• Phonepe
+• UPI 
+
+<b>🆔 UPI ID:</b> <code>{UPI_ID}</code>
+━━━━━━━━━━━━━━━━━━
+<b>📞 Need More Information?</b>
+
+Contact: <a href='https://t.me/{OWNER_USERNAME}'>𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬</a>
+
+✨ <i>Every Contribution Motivates Us To Improve And Maintain The Service.</i>"""
 
 START_BUTTONS = InlineKeyboardMarkup([
     [
@@ -114,21 +148,39 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention), reply_markup=HELP_BUTTONS)
+    await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention), reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
-    await message.reply_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS)
+    await message.reply_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
+
+@DKBOTZBOT.on_message(filters.command("about"))
+async def about_cmd(client, message):
+    await message.reply_text(ABOUT_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
+
+@DKBOTZBOT.on_message(filters.command("donate"))
+async def donate_cmd(client, message):
+    await message.reply_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_callback_query(filters.regex("^dkbotzmsg_"))
 async def callback_handler(client, query):
     data = query.data
 
     if data == "dkbotzmsg_start":
-        await query.message.edit_text(START_MESSAGE.format(mention=query.from_user.mention), reply_markup=START_BUTTONS)
+        await query.message.edit_text(START_MESSAGE.format(mention=query.from_user.mention), reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
     elif data == "dkbotzmsg_help":
-        await query.message.edit_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS)
+        await query.message.edit_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
+
+    elif data == "dkbotzmsg_about":
+        await query.message.edit_text(ABOUT_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
+
+    elif data == "dkbotzmsg_donate":
+        await query.message.edit_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
+
+    elif data == "dkbotzmsg_close":
+        await query.message.delete()
+
 
 @DKBOTZBOT.on_message(filters.text & filters.private)
 async def dkbotz_handle_link(client, message):
