@@ -15,6 +15,20 @@ DKBOTZBOT = DKBOTZ(
     workers=999,
 )
 
+### All Message Start
+
+START_MESSAGE = """<b>👋 Hello {mention},
+
+🚀 Welcome To MX Player Downloader Bot 🎬
+
+<i>⚡️ Use Me To Download MX Player Movies & Shows 🍿
+
+✨ Just Send Me A Valid MX Player Link And See The Magic ✨</i>
+
+💡 Send /help For More Information 📖</b>"""
+
+### All Messages End
+
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
     for _ in range(3):
@@ -50,7 +64,7 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    await message.reply_text("<b>🚀 Welcome To MX Player Downloader Bot\n\n<i>⚡️ Use Me To Download MX Player Movies And Shows\n\n✨ Just Send Me A Valid MX Player Link And See The Magic</i>\n\n💡 Send /help For More Information</b>")
+    await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention))
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
