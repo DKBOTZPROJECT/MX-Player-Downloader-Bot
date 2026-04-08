@@ -53,15 +53,15 @@ HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
 • Only Valid MX Player Links Are Supported ❗
 • Processing Time Depends On File Size And Server Speed ⏳</b>"""
 
-ABOUT_MESSAGE = f"""<b>ℹ️ 𝐀𝐛𝐨𝐮𝐭 𝐓𝐡𝐢𝐬 𝐁𝐨𝐭 🤖</b>
+ABOUT_MESSAGE = f"""ℹ️ 𝐀𝐛𝐨𝐮𝐭 𝐓𝐡𝐢𝐬 𝐁𝐨𝐭 🤖
 
-<b>📝 𝐋𝐚𝐧𝐠𝐮𝐚𝐠𝐞 :</b> <a href='https://www.python.org'>𝐏𝐲𝐭𝐡𝐨𝐧</a>
+📝 𝐋𝐚𝐧𝐠𝐮𝐚𝐠𝐞: <a href='https://www.python.org'>𝐏𝐲𝐭𝐡𝐨𝐧</a>
 
-<b>🧰 𝐅𝐫𝐚𝐦𝐞𝐖𝐨𝐫𝐤 :</b> <a href=https://github.com/Mayuri-Chan/pyrofork'>𝐏𝐲𝐫𝐨𝐟𝐨𝐫𝐤</a>
+🧰 𝐅𝐫𝐚𝐦𝐞𝐖𝐨𝐫𝐤: <a href=https://github.com/Mayuri-Chan/pyrofork'>𝐏𝐲𝐫𝐨𝐟𝐨𝐫𝐤</a>
 
-<b>👨‍💻 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫 :</b> <a href='https://t.me/{OWNER_USERNAME}'>𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬</a>
+👨‍💻 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫: <a href='https://t.me/{OWNER_USERNAME}'>𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬</a>
 
-<b>📢 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 :</b> <a href='{CHANNEL_URL}'>𝐂𝐡𝐚𝐧𝐧𝐞𝐥</a>"""
+📢 𝐂𝐡𝐚𝐧𝐧𝐞𝐥: <a href='{CHANNEL_URL}'>𝐂𝐡𝐚𝐧𝐧𝐞𝐥</a>"""
 
 DONATE_MESSAGE = f"""<b>💗 Thank You For Showing Interest In Supporting Us</b>
 
@@ -74,7 +74,7 @@ DONATE_MESSAGE = f"""<b>💗 Thank You For Showing Interest In Supporting Us</b>
 <b>📨 Payment Methods:</b>
 • Google Pay
 • Paytm
-• Phonepe
+• PhonePe
 • UPI 
 
 <b>🆔 UPI ID:</b> <code>{UPI_ID}</code>
