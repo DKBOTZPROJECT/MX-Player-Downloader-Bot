@@ -7,6 +7,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 API_ID = int(os.environ.get("API_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME", "DKBOTZ")
+CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
 
 DKBOTZBOT = DKBOTZ(
     "dkbotz_mx_player_bot",
@@ -50,11 +52,29 @@ HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
 • Processing Time Depends On File Size And Server Speed ⏳</b>"""
 
 START_BUTTONS = InlineKeyboardMarkup([
-    [InlineKeyboardButton("📖 Help", callback_data="dkbotzmsg_help")]
+    [
+        InlineKeyboardButton("❓ Help", callback_data="dkbotzmsg_help"),
+        InlineKeyboardButton("ℹ️ About", callback_data="dkbotzmsg_about")
+    ],
+    [
+        InlineKeyboardButton("Join My Update Channel 📢", url=CHANNEL_URL)
+    ],
+    [
+        InlineKeyboardButton("📛 Close", callback_data="dkbotzmsg_close")
+    ]
 ])
 
 HELP_BUTTONS = InlineKeyboardMarkup([
-    [InlineKeyboardButton("🏠 Back", callback_data="dkbotzmsg_start")]
+    [
+        InlineKeyboardButton("🏡 Home", callback_data="dkbotzmsg_start"),
+        InlineKeyboardButton("💸 Donate", callback_data="dkbotzmsg_donate")
+    ],
+    [
+        InlineKeyboardButton("Join My Update Channel 📢", url=CHANNEL_URL)
+    ],
+    [
+        InlineKeyboardButton("📛 Close", callback_data="dkbotzmsg_close")
+    ]
 ])
 
 ### All Messages End And Button
