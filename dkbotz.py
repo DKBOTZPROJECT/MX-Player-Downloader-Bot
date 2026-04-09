@@ -229,7 +229,7 @@ async def dkbotz_handle_link(client, message):
     description = dkbotz_mx_data.get("description", "")
     thumb = dkbotz_mx_data.get("thumbnail", "")
 
-    text = f"<b>🎬 Full Title:</b> {title}\n\n<b>📝 Description:</b>\n{description[:300]}...\n\n<b>🔗 Download URL:</b>\n{download_url}"
+    text = f"<b>🎬 Full Title:</b> {full_title}\n\n<b>📝 Description:</b>\n{description[:300]}...\n\n<b>🔗 Download URL:</b>\n{download_url}"
 
     try:
         if thumb:
