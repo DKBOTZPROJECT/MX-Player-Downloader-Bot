@@ -43,6 +43,9 @@ UPI_ID = os.environ.get("UPI_ID", "dkbotzpro@ybl")
 CHANNEL_USERNAME = validate_username(os.environ.get("CHANNEL_USERNAME", ""), "DKBOTZ")
 CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
 
+BOT_INFO = None
+BOT_USERNAME = None
+
 LOG_CHANNEL = validate_channel(os.environ.get("LOG_CHANNEL", ""))
 FSUB_CHANNEL = validate_channel(os.environ.get("FSUB_CHANNEL", ""))
 
