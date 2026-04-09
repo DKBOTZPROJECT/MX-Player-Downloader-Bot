@@ -4,6 +4,7 @@ import asyncio
 from pyrogram import Client as DKBOTZ, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from Config import *
+from fsub import ForceSub
 
 DKBOTZBOT = DKBOTZ(
     "dkbotz_mx_player_bot",
@@ -141,18 +142,30 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
+    if not await ForceSub(client, message):
+        return
+
     await message.reply_text(START_MESSAGE.format(mention=message.from_user.mention), reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
+    if not await ForceSub(client, message):
+        return
+
     await message.reply_text(HELP_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_message(filters.command("about"))
 async def about_cmd(client, message):
+    if not await ForceSub(client, message):
+        return
+
     await message.reply_text(ABOUT_MESSAGE, reply_markup=HELP_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_message(filters.command("donate"))
 async def donate_cmd(client, message):
+    if not await ForceSub(client, message):
+        return
+
     await message.reply_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
 @DKBOTZBOT.on_callback_query(filters.regex("^dkbotzmsg_"))
@@ -180,6 +193,9 @@ async def dkbotz_handle_link(client, message):
     url = message.text.strip()
 
     if not (url.startswith("http://") or url.startswith("https://")):
+        return
+
+    if not await ForceSub(client, message):
         return
 
     checking = await message.reply_text("<b>🔍 Checking...</b>")
