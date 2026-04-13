@@ -131,26 +131,74 @@ def humanbytes(size):
     return f"{round(size, 2)} {units[n]}"
 
 async def fix_thumb(thumb):
-    """Fix and resize thumbnail"""
     width = 0
     height = 0
+
     try:
-        if thumb is not None:
+        if not thumb:
+            return 0, 0, None
+
+        thumb = str(thumb).strip()
+
+        if thumb.startswith(("http://", "https://")):
+            os.makedirs("DKBOTZ", exist_ok=True)
+
+            name = "".join(random.choices(string.ascii_letters + string.digits, k=12))
+            ext = os.path.splitext(thumb.split("?")[0])[1].lower()
+            if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
+                ext = ".jpg"
+
+            file_path = os.path.join("DKBOTZ", f"{name}{ext}")
+
+            timeout = aiohttp.ClientTimeout(total=30)
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"}
+
+            async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
+                async with session.get(thumb) as resp:
+                    if resp.status != 200:
+                        return 0, 0, None
+
+                    with open(file_path, "wb") as f:
+                        while True:
+                            chunk = await resp.content.read(1024 * 32)
+                            if not chunk:
+                                break
+                            f.write(chunk)
+
+            thumb = file_path
+
+        if not os.path.exists(thumb):
+            return 0, 0, None
+
+        img = Image.open(thumb).convert("RGB")
+        ow, oh = img.size
+
+        if ow <= 0 or oh <= 0:
+            return 0, 0, None
+
+        new_width = 320
+        new_height = int((oh / ow) * new_width)
+
+        img = img.resize((new_width, new_height))
+        img.save(thumb, "JPEG", quality=95)
+
+        width = new_width
+        height = new_height
+
+        try:
             metadata = extractMetadata(createParser(thumb))
-            if metadata.has("width"):
-                width = metadata.get("width")
-            if metadata.has("height"):
-                height = metadata.get("height")
+            if metadata:
+                if metadata.has("width"):
+                    width = metadata.get("width")
+                if metadata.has("height"):
+                    height = metadata.get("height")
+        except:
+            pass
 
-            Image.open(thumb).convert("RGB").save(thumb)
-            img = Image.open(thumb)
-            img.resize((320, height))
-            img.save(thumb, "JPEG")
+        return width, height, thumb
+
     except Exception as e:
-        print(f"Thumbnail fix error: {e}")
-        thumb = None
-
-    return width, height, thumb
+        return 0, 0, None
 
 def TimeFormatter(milliseconds: int) -> str:
     """Format time from milliseconds to readable format"""
