@@ -558,7 +558,7 @@ async def start_download(client, query, saved):
                     if thumbnail:
                         await remove_file(dkthumbs)
 
-            safe_delete()
+            await safe_delete()
 
         except FileNotFoundError:
             await safe_edit("<b>❌ yt-dlp Not Installed</b>")
