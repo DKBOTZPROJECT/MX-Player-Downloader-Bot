@@ -343,11 +343,14 @@ async def start_download(client, query, saved):
             if not files:
                 return await safe_edit("<b>❌ File Not Found</b>")
 
-            file_path = max(files, key=os.path.getsize)
-            size = os.path.getsize(file_path)
-
-            await safe_edit(f"<b>✅ Download Completed</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{size}</code>\n<b>🎵 Audio Tracks:</b> <code>{len(a)}</code>")
-            
+            await safe_edit(f"<b>✅ Download Completed</b>\n\n<b>📁 Total Files:</b> <code>{len(files)}</code>\n<b>🎵 Audio Tracks:</b> <code>{len(a)}</code>\n\n<b>🚀 Uploading Starting...</b>")
+            for file_path in files:
+                try:
+                    size = os.path.getsize(file_path)
+                    await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{size}</code>")
+                    await upload_video(file_path, size)
+                except Exception as e:
+                    await safe_edit(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
 
         except FileNotFoundError:
             await safe_edit("<b>❌ yt-dlp Not Installed</b>")
