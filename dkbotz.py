@@ -1,6 +1,7 @@
 import os
 import requests
 import asyncio
+import yt_dlp
 from pyrogram import Client as DKBOTZ, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from Config import *
@@ -229,16 +230,51 @@ async def dkbotz_handle_link(client, message):
     description = dkbotz_mx_data.get("description", "")
     thumb = dkbotz_mx_data.get("thumbnail", "")
 
-    text = f"<b>🎬 Full Title:</b> {full_title}\n\n<b>📝 Description:</b>\n{description[:300]}...\n\n<b>🔗 Download URL:</b>\n{download_url}"
-
     try:
-        if thumb:
-            await message.reply_photo(thumb, caption=text)
-        else:
-            await message.reply_text(text)
-        await checking.delete()
+        with yt_dlp.YoutubeDL({"quiet": True, "nocheckcertificate": True}) as ydl:
+            info = ydl.extract_info(download_url, download=False)
+
+        fmts = info.get("formats", [])
+        videos = []
+        audios = []
+
+        for f in fmts:
+            fid = str(f.get("format_id"))
+            vcodec = f.get("vcodec")
+            acodec = f.get("acodec")
+            h = f.get("height")
+            ext = f.get("ext", "mp4")
+            abr = f.get("abr")
+
+            if vcodec != "none":
+                q = f"{h}p" if h else ext.upper()
+                videos.append((fid, q))
+
+            if vcodec == "none" and acodec != "none":
+                lang = f.get("language") or f.get("language_preference") or "Unknown"
+                q = f"{int(abr)}kbps [{lang}]" if abr else f"{ext.upper()} [{lang}]"
+                audios.append((fid, q))
+
+        videos = list(dict.fromkeys(videos))
+        audios = list(dict.fromkeys(audios))
+
     except:
-        await checking.edit_text(text)
+        return await checking.edit_text("<b>❌ Failed To Read Formats</b>")
+
+    USER_DATA[message.from_user.id][message.id] = {"url": url, "download_url": download_url, "title": full_title, "thumb": thumb, "videos": videos, "audios": audios, "selected_video": None, "selected_audio": audios[0][0] if audios else None}
+
+    btn = []
+    for fid, q in videos[:25]:
+        btn.append([InlineKeyboardButton(f"🎥 {q}", callback_data=f"select_video_{message.id}_{fid}")])
+
+    text = f"<b>🎬 Full Title:</b> {full_title}\n\n<b>📝 Description:</b>\n{description[:300]}..."
+
+    if thumb:
+        await message.reply_photo(thumb, caption=text, reply_markup=InlineKeyboardMarkup(btn))
+    else:
+        await message.reply_text(text, reply_markup=InlineKeyboardMarkup(btn))
+
+    await checking.delete()
 
 
 
