@@ -270,6 +270,14 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
         except:
             pass
 
+async def remove_file(file_path):
+    try:
+        if file_path and os.path.exists(file_path):
+            os.remove(file_path)
+        return True
+    except Exception as e:
+        return False
+
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
     for _ in range(3):
@@ -504,17 +512,27 @@ async def start_download(client, query, saved):
             for file_path in files:
                 try:
                     size = os.path.getsize(file_path)
-                    await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>")
+                    file_name = os.path.basename(file_path)
+                    file_size = humanbytes(size)
+                    await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
                     duration, width, height = await get_video_metadata(file_path)
                     if thumbnail:
                         width, height, dkthumbs = await fix_thumb(thumbnail)
 
                     start_time = time.time()
-                    caption = f"<b>📁 Name:</b> <code><b>{os.path.basename(file_path)}</code>\n\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>"
+                    caption = f"<b>📁 Name:</b> <code><b>{file_name}</code>\n\n<b>📦 Size:</b> <code>{file_size}</code>"
                     await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    await asyncio.sleep(2)
+                    await remove_file(file_path)
+                    if thumbnail:
+                        await remove_file(dkthumbs)
+                    await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
 
                 except Exception as e:
                     await safe_edit(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
+                    await remove_file(file_path)
+                    if thumbnail:
+                        await remove_file(dkthumbs)
 
         except FileNotFoundError:
             await safe_edit("<b>❌ yt-dlp Not Installed</b>")
