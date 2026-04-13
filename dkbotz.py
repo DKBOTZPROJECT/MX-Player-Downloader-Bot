@@ -5,6 +5,9 @@ import glob
 import requests
 import asyncio
 import yt_dlp
+from PIL import Image
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
 from pyrogram import Client as DKBOTZ, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
@@ -114,6 +117,61 @@ HELP_BUTTONS = InlineKeyboardMarkup([
 
 ### All Messages End And Button
 
+def humanbytes(size):
+    """Convert bytes to human readable format"""
+    if not size:
+        return "0 B"
+    power = 2**10
+    n = 0
+    units = {0: 'B', 1: 'KB', 2: 'MB', 3: 'GB', 4: 'TB'}
+    while size > power:
+        size /= power
+        n += 1
+    return f"{round(size, 2)} {units[n]}"
+
+async def fix_thumb(thumb):
+    """Fix and resize thumbnail"""
+    width = 0
+    height = 0
+    try:
+        if thumb is not None:
+            metadata = extractMetadata(createParser(thumb))
+            if metadata.has("width"):
+                width = metadata.get("width")
+            if metadata.has("height"):
+                height = metadata.get("height")
+
+            Image.open(thumb).convert("RGB").save(thumb)
+            img = Image.open(thumb)
+            img.resize((320, height))
+            img.save(thumb, "JPEG")
+    except Exception as e:
+        print(f"Thumbnail fix error: {e}")
+        thumb = None
+
+    return width, height, thumb
+
+
+async def get_video_metadata(file_path):
+    """Extract video duration, width, and height"""
+    duration = 0
+    width = 0
+    height = 0
+
+    try:
+        metadata = extractMetadata(createParser(file_path))
+        if metadata is not None:
+            if metadata.has("duration"):
+                duration = metadata.get('duration').seconds
+            if metadata.has("width"):
+                width = metadata.get("width")
+            if metadata.has("height"):
+                height = metadata.get("height")
+    except Exception as e:
+        print(f"Metadata extraction error: {e}")
+
+    return duration, width, height
+
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
     for _ in range(3):
@@ -198,6 +256,7 @@ async def start_download(client, query, saved):
     user_id = query.from_user.id
     msg_id = query.message.id
     url = saved["download_url"]
+    thumbnail = saved["thumb"]
     title = saved["title"]
     v = saved["selected_video"]
     a = saved["selected_audio"]
