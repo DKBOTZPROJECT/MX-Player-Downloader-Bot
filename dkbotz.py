@@ -1,11 +1,14 @@
 import os
 import re
 import time
+import random
+import string
 import math
 import glob
 import requests
 import asyncio
 import yt_dlp
+import aiohttp
 from PIL import Image
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
