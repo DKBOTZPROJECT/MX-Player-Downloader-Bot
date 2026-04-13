@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import math
 import glob
 import requests
 import asyncio
@@ -151,6 +152,18 @@ async def fix_thumb(thumb):
 
     return width, height, thumb
 
+def TimeFormatter(milliseconds: int) -> str:
+    """Format time from milliseconds to readable format"""
+    seconds, milliseconds = divmod(int(milliseconds), 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = ((str(days) + "d, ") if days else "") + \
+        ((str(hours) + "h, ") if hours else "") + \
+        ((str(minutes) + "m, ") if minutes else "") + \
+        ((str(seconds) + "s, ") if seconds else "") + \
+        ((str(milliseconds) + "ms, ") if milliseconds else "")
+    return tmp[:-2]
 
 async def get_video_metadata(file_path):
     """Extract video duration, width, and height"""
