@@ -507,6 +507,7 @@ async def dkbotz_handle_link(client, message):
     except:
         return await checking.edit_text("<b>❌ Failed To Read Formats</b>")
 
+    USER_DATA.setdefault(message.from_user.id, {})
     USER_DATA[message.from_user.id][message.id] = {"url": url, "download_url": download_url, "title": full_title, "thumb": thumb, "videos": videos, "audios": audios, "selected_video": None, "selected_audio": audios[0][0] if audios else None}
 
     btn = []
