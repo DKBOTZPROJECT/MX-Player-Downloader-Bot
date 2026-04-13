@@ -507,11 +507,11 @@ async def start_download(client, query, saved):
                     await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>")
                     duration, width, height = await get_video_metadata(file_path)
                     if thumbnail:
-                        width, height, thumbnail = await fix_thumb(thumbnail)
+                        width, height, dkthumbs = await fix_thumb(thumbnail)
 
                     start_time = time.time()
                     caption = f"<b>📁 Name:</b> <code><b>{os.path.basename(file_path)}</code>\n\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>"
-                    await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=thumbnail if thumbnail else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
 
                 except Exception as e:
                     await safe_edit(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
