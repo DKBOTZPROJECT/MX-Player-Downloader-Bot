@@ -43,7 +43,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 ## Deploy Option
 ### ⚠️ Before Deploy Or Hosting, Read Notes Section
 
-Please Read The Notes Section [Here](https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot/blob/DKBOTZ/README.md#notes)
+[Please Read The Notes Section Here](https://github.com/DKBOTZPROJECT/MX-Player-Downloader-Bot/blob/DKBOTZ/README.md#notes)
 
 <details><summary>Deploy To Heroku</summary>
 <p>
@@ -152,11 +152,23 @@ It Helps A Lot And Motivates For More Updates 🚀
 ## Notes
 <details><summary>🚀 How To Increase Download Speed</summary>
 <p>
-Download Speed Basically Depends On 2 Factors:<br><br>
+Download Speed Basically Depends On 2 Factors:<br>
 
 1. 🇮🇳 <b>Use Indian Server</b> - MX Player Links Work Faster On Indian Servers. You Can Use A Proxy Or Indian Server To Increase Speed.<br><br>
 
 2. ⚡ <b>Use Fast VPS Server</b> - Use A High-Speed VPS With Good Network Performance. If The Server Is Located In India, Speed Will Be Even Better And More Stable.
+</p>
+</details>
+
+<details><summary>👨‍💻 By Developer</summary>
+<p>
+
+- Iski Speed Ka Issue Indian Server Use Karne Se Fix Ho Jaayega Pata Nahi Yesa Kyu Hai Mujhko Baad Me Time Milega To Me Iske Upper Ek Baar Kaam Karunga Solve Karne Ki Kosis Karunga. 
+
+- Jo API isme Use Kiya Hu Vah Local Server Par Run Ho Raha Hai isliye Jyda Requests Mat Dalana. Baad Me isko Other Server Par Daal Dunga.
+
+- Agar Bot Me Koi Issues Ho To Mere Support Group Ya Github ke Issues Me Daal Sakte Ho.
+
 </p>
 </details>
 
