@@ -1,9 +1,13 @@
 import os
+import re
+import time
+import glob
 import requests
 import asyncio
 import yt_dlp
 from pyrogram import Client as DKBOTZ, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.errors import FloodWait
 from Config import *
 from fsub import ForceSub
 
@@ -189,6 +193,169 @@ async def callback_handler(client, query):
 
     elif data == "dkbotzmsg_close":
         await query.message.delete()
+
+async def start_download(client, query, saved):
+    user_id = query.from_user.id
+    msg_id = query.message.id
+    url = saved["download_url"]
+    title = saved["title"]
+    v = saved["selected_video"]
+    a = saved["selected_audio"]
+
+    folder = os.path.join("DKBOTZ", str(user_id), str(msg_id))
+    os.makedirs(folder, exist_ok=True)
+
+    if not isinstance(a, list):
+        a = [a] if a else []
+
+    a = [str(i).strip() for i in a if str(i).strip()]
+
+    if len(a) > 1:
+        audio_fmt = "+".join(a)
+    elif len(a) == 1:
+        audio_fmt = a[0]
+    else:
+        audio_fmt = ""
+
+    if v and audio_fmt:
+        fmt = f"{v}+{audio_fmt}"
+    elif v:
+        fmt = v
+    elif audio_fmt:
+        fmt = audio_fmt
+    else:
+        fmt = "best"
+
+    safe_title = "".join(x for x in title if x not in '\\/:*?"<>|').strip()
+    output = os.path.join(folder, f"{safe_title}.%(ext)s")
+
+    cmd = [
+        "yt-dlp",
+        "-f", fmt,
+        "-o", output,
+        "--newline",
+        "--progress",
+        "--no-warnings",
+        "--restrict-filenames",
+        url
+    ]
+
+    async def safe_edit(text):
+        try:
+            await query.message.edit_text(text)
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+            try:
+                await query.message.edit_text(text)
+            except:
+                pass
+        except:
+            pass
+
+    async def run_download():
+        try:
+            audio_text = ", ".join(a) if a else "None"
+            await safe_edit(
+                f"<b>🚀 Preparing Download...</b>\n\n"
+                f"<b>🎥 Video:</b> <code>{v if v else 'None'}</code>\n"
+                f"<b>🎵 Audio:</b> <code>{audio_text}</code>"
+            )
+
+            process = await asyncio.create_subprocess_exec(*cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
+
+            last_update = 0
+            last_text = ""
+            frag_mode = False
+            frag_current = 0
+            frag_total = 0
+
+            while True:
+                line = await process.stdout.readline()
+                if not line:
+                    break
+
+                text = line.decode(errors="ignore").strip()
+
+                if "ERROR:" in text:
+                    return await safe_edit(f"<b>❌ Error</b>\n<code>{text[:350]}</code>")
+
+                if "[download]" not in text:
+                    continue
+
+                frag = re.search(r'frag\s+(\d+)/(\d+)', text)
+                if frag:
+                    frag_mode = True
+                    frag_current = int(frag.group(1))
+                    frag_total = int(frag.group(2))
+
+                percent = re.search(r'(\d+\.\d+)%', text)
+                total = re.search(r'of\s+~?\s*([^\s]+)', text)
+                speed = re.search(r'at\s+([^\s]+)', text)
+                eta = re.search(r'ETA\s+([^\s]+)', text)
+
+                raw_percent = float(percent.group(1)) if percent else 0.0
+                total_size = total.group(1) if total else "Unknown"
+                speed_val = speed.group(1) if speed else "0B/s"
+                eta_val = eta.group(1) if eta else "Calculating"
+
+                if frag_mode and frag_total > 0:
+                    overall = ((frag_current - 1) + (raw_percent / 100)) / frag_total * 100
+                    show_percent = min(overall, 99.9)
+                else:
+                    show_percent = raw_percent
+
+                if "100%" in text and frag_mode and frag_current < frag_total:
+                    continue
+
+                if frag_mode and frag_current >= frag_total and raw_percent >= 100:
+                    show_percent = 100.0
+
+                bar_count = int(show_percent / 10)
+                bar = "▓" * bar_count + "░" * (10 - bar_count)
+
+                frag_text = f"\n<b>🧩 Parts:</b> <code>{frag_current}/{frag_total}</code>" if frag_mode else ""
+                audio_line = f"\n<b>🎵 Tracks:</b> <code>{len(a)}</code>" if a else ""
+
+                show = (
+                    f"<b>📥 Downloading...</b>\n\n"
+                    f"<code>[{bar}] {show_percent:.1f}%</code>\n\n"
+                    f"<b>📦 Size:</b> <code>{total_size}</code>\n"
+                    f"<b>⚡ Speed:</b> <code>{speed_val}</code>\n"
+                    f"<b>⏳ ETA:</b> <code>{eta_val}</code>"
+                    f"{audio_line}"
+                    f"{frag_text}"
+                )
+
+                now = time.time()
+                if show != last_text and now - last_update >= 2:
+                    await safe_edit(show)
+                    last_text = show
+                    last_update = now
+
+            code = await process.wait()
+
+            if code != 0:
+                return await safe_edit("<b>❌ Download Failed</b>")
+
+            files = glob.glob(os.path.join(folder, "*"))
+            files = [x for x in files if os.path.isfile(x)]
+
+            if not files:
+                return await safe_edit("<b>❌ File Not Found</b>")
+
+            file_path = max(files, key=os.path.getsize)
+            size = os.path.getsize(file_path)
+
+            await safe_edit(f"<b>✅ Download Completed</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{size}</code>\n<b>🎵 Audio Tracks:</b> <code>{len(a)}</code>")
+            
+
+        except FileNotFoundError:
+            await safe_edit("<b>❌ yt-dlp Not Installed</b>")
+
+        except Exception as e:
+            await safe_edit(f"<b>❌ Failed</b>\n<code>{str(e)[:350]}</code>")
+
+    asyncio.create_task(run_download())
 
 
 @DKBOTZBOT.on_callback_query(filters.regex("^select"))
