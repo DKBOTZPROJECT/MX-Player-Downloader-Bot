@@ -146,6 +146,19 @@ It Helps A Lot And Motivates For More Updates 🚀
 
 ---
 
+## Notes
+<details><summary>🚀 How To Increase Download Speed</summary>
+<p>
+Download Speed Basically Depends On 2 Factors:<br><br>
+
+1. 🇮🇳 <b>Use Indian Server</b> - MX Player Links Work Faster On Indian Servers. You Can Use A Proxy Or Indian Server To Increase Speed.<br><br>
+
+2. ⚡ <b>Use Fast VPS Server</b> - Use A High-Speed VPS With Good Network Performance. If The Server Is Located In India, Speed Will Be Even Better And More Stable.
+</p>
+</details>
+
+---
+
 ## 💳 Credits
 
 * 👨‍💻 Developer: [𝐀𝐧𝐨𝐧𝐲𝐦𝐨𝐮𝐬](https://t.me/DKBOTZHELP)
