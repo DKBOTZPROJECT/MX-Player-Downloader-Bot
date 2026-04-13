@@ -544,10 +544,9 @@ async def all_select_callbacks(client, query):
                     afid, q, lang = item
                 else:
                     afid, q = item
-                    lang = "Unknown"
 
                 mark = "✅" if afid in selected_ids else "☑️"
-                rows.append([InlineKeyboardButton(f"{mark} 🎵 {q} [{lang}]", callback_data=f"select_audio_{msg_id}_{afid}")])
+                rows.append([InlineKeyboardButton(f"{mark} 🎵 {q}", callback_data=f"select_audio_{msg_id}_{afid}")])
 
             rows.append([
                 InlineKeyboardButton("⏭ Skip Audio", callback_data=f"select_skip_{msg_id}"),
