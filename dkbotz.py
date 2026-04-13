@@ -172,6 +172,40 @@ async def get_video_metadata(file_path):
 
     return duration, width, height
 
+async def progress_for_pyrogram(current, total, ud_type, message, start):
+    """Display download/upload progress"""
+    reply_markup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("🚫 Cancel", callback_data="closeme")]])
+
+    now = time.time()
+    diff = now - start
+
+    if round(diff % 10.00) == 0 or current == total:
+        percentage = current * 100 / total
+        speed = current / diff
+        elapsed_time = round(diff) * 1000
+        time_to_completion = round(
+            (total - current) / speed) * 1000 if speed > 0 else 0
+        estimated_total_time = elapsed_time + time_to_completion
+
+        elapsed_time = TimeFormatter(milliseconds=elapsed_time)
+        estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
+
+        progress = "[{0}{1}] \n<b>📊 Percentage:</b> {2}%\n".format(
+            ''.join(["■" for i in range(math.floor(percentage / 5))]),
+            ''.join(["□" for i in range(20 - math.floor(percentage / 5))]),
+            round(percentage, 2))
+
+        tmp = progress + "<b>✅ Completed:</b> {0}\n<b>📁 Total Size:</b> {1}\n<b>🚀 Speed:</b> {2}/s\n<b>⌚️ ETA:</b> {3}\n".format(
+            humanbytes(current), humanbytes(total), humanbytes(speed),
+            estimated_total_time if estimated_total_time != '' else "0 s")
+
+        try:
+            await message.edit(text="{}\n{}".format(ud_type, tmp),
+                               reply_markup=reply_markup)
+        except:
+            pass
+
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
     for _ in range(3):
@@ -406,8 +440,15 @@ async def start_download(client, query, saved):
             for file_path in files:
                 try:
                     size = os.path.getsize(file_path)
-                    await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{size}</code>")
-                    await upload_video(file_path, size)
+                    await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{os.path.basename(file_path)}</code>\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>")
+                    duration, width, height = await get_video_metadata(file_path)
+                    if thumbnail:
+                        width, height, thumbnail = await fix_thumb(thumbnail)
+
+                    start_time = time.time()
+                    caption = f"<b>📁 Name:</b> <code><b>{os.path.basename(file_path)}</code>\n\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>"
+                    await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=thumbnail if thumbnail else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+
                 except Exception as e:
                     await safe_edit(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
 
