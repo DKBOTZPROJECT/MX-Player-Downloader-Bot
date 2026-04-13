@@ -7,6 +7,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from Config import *
 from fsub import ForceSub
 
+USER_DATA = {}
+
 DKBOTZBOT = DKBOTZ(
     "dkbotz_mx_player_bot",
     api_id=API_ID,
@@ -188,6 +190,83 @@ async def callback_handler(client, query):
     elif data == "dkbotzmsg_close":
         await query.message.delete()
 
+
+@DKBOTZBOT.on_callback_query(filters.regex("^select"))
+async def all_select_callbacks(client, query):
+    try:
+        parts = query.data.split("_")
+        user_id = query.from_user.id
+        action = parts[1]
+        msg_id = int(parts[2])
+        saved = USER_DATA.get(user_id, {}).get(msg_id)
+
+        if not saved:
+            return await query.answer("Expired", True)
+
+        def build_audio_buttons(msg_id, audios, selected_ids):
+            rows = []
+            for item in audios[:25]:
+                if len(item) == 3:
+                    afid, q, lang = item
+                else:
+                    afid, q = item
+                    lang = "Unknown"
+
+                mark = "✅" if afid in selected_ids else "☑️"
+                rows.append([InlineKeyboardButton(f"{mark} 🎵 {q} [{lang}]", callback_data=f"select_audio_{msg_id}_{afid}")])
+
+            rows.append([
+                InlineKeyboardButton("⏭ Skip Audio", callback_data=f"select_skip_{msg_id}"),
+                InlineKeyboardButton("🚀 Download", callback_data=f"select_done_{msg_id}")
+            ])
+            return InlineKeyboardMarkup(rows)
+
+        if action == "video":
+            fid = "_".join(parts[3:])
+            saved["selected_video"] = fid
+            audios = saved.get("audios", [])
+
+            if not audios:
+                saved["selected_audio"] = []
+                return await start_download(client, query, saved)
+
+            if "selected_audio" not in saved or not isinstance(saved["selected_audio"], list):
+                first_audio = audios[0][0] if audios else None
+                saved["selected_audio"] = [first_audio] if first_audio else []
+
+            if len(audios) == 1:
+                return await start_download(client, query, saved)
+
+            return await query.message.edit_reply_markup(build_audio_buttons(msg_id, audios, saved["selected_audio"]))
+
+        elif action == "audio":
+            fid = "_".join(parts[3:])
+
+            if "selected_audio" not in saved or not isinstance(saved["selected_audio"], list):
+                saved["selected_audio"] = []
+
+            if fid in saved["selected_audio"]:
+                saved["selected_audio"].remove(fid)
+            else:
+                saved["selected_audio"].append(fid)
+
+            return await query.message.edit_reply_markup(build_audio_buttons(msg_id, saved.get("audios", []), saved["selected_audio"]))
+
+        elif action == "skip":
+            saved["selected_audio"] = []
+            return await start_download(client, query, saved)
+
+        elif action == "done":
+            if "selected_audio" not in saved or not isinstance(saved["selected_audio"], list):
+                saved["selected_audio"] = []
+
+            return await start_download(client, query, saved)
+
+        else:
+            return await query.answer("Unknown Action", True)
+
+    except Exception as e:
+        return await query.answer(str(e), True)
 
 @DKBOTZBOT.on_message(filters.text & filters.private)
 async def dkbotz_handle_link(client, message):
