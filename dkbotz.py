@@ -417,6 +417,30 @@ async def start_download(client, query, saved):
         except:
             pass
 
+    async def safe_reply(text):
+        try:
+            await query.message.reply_text(text)
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+            try:
+                await query.message.reply_text(text)
+            except:
+                pass
+        except:
+            pass
+
+    async def safe_delete():
+        try:
+            await query.message.delete()
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+            try:
+                await query.message.delete()
+            except:
+                pass
+        except:
+            pass
+
     async def run_download():
         try:
             audio_text = ", ".join(a) if a else "None"
@@ -529,10 +553,12 @@ async def start_download(client, query, saved):
                     await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
 
                 except Exception as e:
-                    await safe_edit(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
+                    await safe_reply(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
                     await remove_file(file_path)
                     if thumbnail:
                         await remove_file(dkthumbs)
+
+            safe_delete()
 
         except FileNotFoundError:
             await safe_edit("<b>❌ yt-dlp Not Installed</b>")
