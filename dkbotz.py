@@ -5,6 +5,7 @@ import random
 import string
 import math
 import glob
+import shutil
 import requests
 import asyncio
 import yt_dlp
@@ -278,6 +279,27 @@ async def remove_file(file_path):
     except Exception as e:
         return False
 
+async def remove_folder(folder_path):
+    try:
+        if not folder_path or not os.path.exists(folder_path):
+            return True
+
+        try:
+            shutil.rmtree(folder_path, ignore_errors=True)
+        except:
+            pass
+
+        if os.path.exists(folder_path):
+            try:
+                os.rmdir(folder_path)
+            except:
+                pass
+
+        return not os.path.exists(folder_path)
+
+    except Exception as e:
+        return False
+
 async def mx_player_request_api(url):
     api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
     for _ in range(3):
@@ -546,11 +568,11 @@ async def start_download(client, query, saved):
                     start_time = time.time()
                     caption = f"<b>📁 Name:</b> <code><b>{file_name}</code>\n\n<b>📦 Size:</b> <code>{file_size}</code>"
                     await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
                     await asyncio.sleep(2)
                     await remove_file(file_path)
                     if thumbnail:
                         await remove_file(dkthumbs)
-                    await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
 
                 except Exception as e:
                     await safe_reply(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
@@ -559,6 +581,7 @@ async def start_download(client, query, saved):
                         await remove_file(dkthumbs)
 
             await safe_delete()
+            await remove_folder(folder)
 
         except FileNotFoundError:
             await safe_edit("<b>❌ yt-dlp Not Installed</b>")
