@@ -326,7 +326,7 @@ def full_title_builder(dkbotz_mx_data):
         full_title += f" {season}"
 
     if episode:
-        full_title += f" - {episode}"
+        full_title += f" {episode}"
 
     return full_title.strip()
 
@@ -567,7 +567,17 @@ async def start_download(client, query, saved):
 
                     start_time = time.time()
                     caption = f"<b>📁 Name:</b> <code><b>{file_name}</code>\n\n<b>📦 Size:</b> <code>{file_size}</code>"
-                    await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    dkcopy = await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    
+                    if LOG_CHANNEL:
+                        user = query.from_user
+                        log_msg=f"📥 <b>New Video Uploaded</b>\n👤 <b>User:</b> {user.mention if user else 'Unknown'}\n🆔 <b>ID:</b> <code>{user.id if user else 0}</code>\n📛 <b>Username:</b> {'@'+user.username if user and user.username else 'No Username'}"
+                        try:
+                            log = await dkcopy.copy(LOG_CHANNEL)
+                            await log.reply(log_msg)
+                        except Exception as e:
+                            pass
+
                     await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
                     await asyncio.sleep(2)
                     await remove_file(file_path)
