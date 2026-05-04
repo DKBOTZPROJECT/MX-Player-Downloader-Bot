@@ -420,6 +420,7 @@ async def start_download(client, query, saved):
         "yt-dlp",
         "-f", fmt,
         "-o", output,
+        "-N", "16",  # <--- Add this line for 16 parallel threads
         "--newline",
         "--progress",
         "--no-warnings",
