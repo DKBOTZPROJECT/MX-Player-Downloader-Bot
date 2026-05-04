@@ -37,10 +37,10 @@ API_ID = get_int(os.environ.get("API_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
-OWNER_USERNAME = validate_username(os.environ.get("OWNER_USERNAME", ""), "DKBOTZHELP")
-UPI_ID = os.environ.get("UPI_ID", "dkbotzpro@ybl")
+OWNER_USERNAME = validate_username(os.environ.get("OWNER_USERNAME", ""), "THECIDKAGENOU")
+UPI_ID = os.environ.get("UPI_ID", "thelordshadow@upi")
 
-CHANNEL_USERNAME = validate_username(os.environ.get("CHANNEL_USERNAME", ""), "DKBOTZ")
+CHANNEL_USERNAME = validate_username(os.environ.get("CHANNEL_USERNAME", ""), "THECIDANIME")
 CHANNEL_URL = f"https://t.me/{CHANNEL_USERNAME}"
 
 BOT_INFO = None
@@ -49,7 +49,7 @@ BOT_USERNAME = None
 LOG_CHANNEL = validate_channel(os.environ.get("LOG_CHANNEL", ""))
 FSUB_CHANNEL = validate_channel(os.environ.get("FSUB_CHANNEL", ""))
 
-ADMINS = get_admins(os.environ.get("ADMINS", "1805398747 5111685964"))
+ADMINS = get_admins(os.environ.get("ADMINS", "943270135 943270132"))
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 DATABASE_NAME = os.environ.get("DATABASE_NAME", "DKBOTZMXDOWNLOADER")
