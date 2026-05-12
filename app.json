@@ -73,6 +73,11 @@
     "GOFILE_TOKEN": {
       "description": "Optional Gofile.io Account Token (default: guest uploads)",
       "required": false
+    },
+    "LOG_FILE": {
+      "description": "Path For The Bot Log File Used By /logs (default: bot.log)",
+      "required": false,
+      "value": "bot.log"
     }
   },
   "buildpacks": [

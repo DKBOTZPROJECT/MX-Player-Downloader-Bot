@@ -6,6 +6,7 @@ import string
 import math
 import glob
 import shutil
+import logging
 import requests
 import asyncio
 import yt_dlp
@@ -19,6 +20,17 @@ from pyrogram.errors import FloodWait
 from Config import *
 from fsub import ForceSub
 from gofile import upload_to_gofile
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler(),
+    ],
+)
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
+LOGGER = logging.getLogger("DKBOTZ")
 
 USER_DATA = {}
 
@@ -50,13 +62,19 @@ HELP_MESSAGE = """<b>📖 Advanced Help Guide 📘
 ⚙️ How It Works:
 1️⃣ Send MX Player Video Link 🔗
 2️⃣ Select Quality 🎞️
-3️⃣ Processing Begins Instantly ⚡
-4️⃣ Video Delivered Directly To You 📥
+3️⃣ Pick Audio Track(s) 🎵
+4️⃣ Choose Output Container (MP4 / MKV) 📦
+5️⃣ Processing Begins Instantly ⚡
+6️⃣ Video Delivered Directly To You 📥
+
+🛠️ Admin Commands:
+• /logs - Send The Bot Log File 📜
 
 🚀 Features:
 • Ultra Fast Download Engine ⚡
 • Automatic Link Detection 🔍
 • Optimized Upload System 📤
+• Gofile.io Fallback For Files > Telegram Limit ☁️
 • Smart Error Handling 🛠️
 
 ⚠️ Note:
@@ -238,6 +256,53 @@ async def get_video_metadata(file_path):
 
     return duration, width, height
 
+def make_gofile_progress_cb(message, start, min_interval=5.0):
+    """Return an async callback that edits `message` with gofile upload progress.
+
+    Throttled so we don't run into Telegram FloodWaits while still showing
+    a moving bar / speed / ETA for big files.
+    """
+    state = {"ts": 0.0, "text": ""}
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("🚫 Cancel", callback_data="closeme")]])
+
+    async def cb(current, total):
+        now = time.time()
+        if total and current < total and now - state["ts"] < min_interval:
+            return
+
+        diff = max(now - start, 0.001)
+        percentage = (current * 100 / total) if total else 0
+        speed = current / diff
+        eta_ms = int(((total - current) / speed) * 1000) if speed > 0 else 0
+        elapsed_ms = int(diff * 1000)
+
+        filled = math.floor(percentage / 5)
+        bar = "■" * filled + "□" * (20 - filled)
+
+        text = (
+            "<b>📤 Uploading To Gofile...</b>\n\n"
+            f"<code>[{bar}]</code>\n"
+            f"<b>📊 Percentage:</b> {round(percentage, 2)}%\n"
+            f"<b>✅ Uploaded:</b> {humanbytes(current)}\n"
+            f"<b>📁 Total Size:</b> {humanbytes(total)}\n"
+            f"<b>🚀 Speed:</b> {humanbytes(speed)}/s\n"
+            f"<b>⏱️ Elapsed:</b> {TimeFormatter(elapsed_ms) or '0s'}\n"
+            f"<b>⌚️ ETA:</b> {TimeFormatter(eta_ms) or '0s'}"
+        )
+        if text == state["text"]:
+            state["ts"] = now
+            return
+        try:
+            await message.edit(text=text, reply_markup=reply_markup)
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+        except Exception:
+            pass
+        state["ts"] = now
+        state["text"] = text
+
+    return cb
+
 async def progress_for_pyrogram(current, total, ud_type, message, start):
     """Display download/upload progress"""
     reply_markup = InlineKeyboardMarkup(
@@ -389,6 +454,29 @@ async def donate_cmd(client, message):
 
     await message.reply_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
+@DKBOTZBOT.on_message(filters.command("logs"))
+async def logs_cmd(client, message):
+    user_id = message.from_user.id if message.from_user else 0
+    if user_id not in ADMINS:
+        return await message.reply_text("<b>❌ Admins Only</b>")
+
+    if not os.path.exists(LOG_FILE):
+        return await message.reply_text("<b>📂 No Log File Yet</b>")
+
+    size = os.path.getsize(LOG_FILE)
+    if size == 0:
+        return await message.reply_text("<b>📂 Log File Is Empty</b>")
+
+    try:
+        await message.reply_document(
+            LOG_FILE,
+            caption=f"<b>📜 Bot Logs</b>\n<b>📁 Name:</b> <code>{os.path.basename(LOG_FILE)}</code>\n<b>📦 Size:</b> <code>{humanbytes(size)}</code>",
+        )
+        LOGGER.info("/logs sent to admin user=%s", user_id)
+    except Exception as e:
+        LOGGER.exception("/logs failed for user=%s", user_id)
+        await message.reply_text(f"<b>❌ Failed To Send Logs</b>\n<code>{str(e)[:300]}</code>")
+
 @DKBOTZBOT.on_callback_query(filters.regex("^dkbotzmsg_"))
 async def callback_handler(client, query):
     data = query.data
@@ -416,6 +504,9 @@ async def start_download(client, query, saved):
     title = saved["title"]
     v = saved["selected_video"]
     a = saved["selected_audio"]
+    out_ext = (saved.get("selected_format") or "mp4").lower()
+    if out_ext not in ("mp4", "mkv"):
+        out_ext = "mp4"
 
     folder = os.path.join("DKBOTZ", str(user_id), str(msg_id))
     os.makedirs(folder, exist_ok=True)
@@ -448,13 +539,17 @@ async def start_download(client, query, saved):
         "yt-dlp",
         "-f", fmt,
         "-o", output,
-        "-N", "16",  # <--- Add this line for 16 parallel threads
+        "-N", "16",  # 16 parallel threads
+        "--merge-output-format", out_ext,
+        "--remux-video", out_ext,
         "--newline",
         "--progress",
         "--no-warnings",
         "--restrict-filenames",
         url
     ]
+
+    LOGGER.info("Starting download: user=%s msg=%s fmt=%s container=%s", user_id, msg_id, fmt, out_ext)
 
     async def safe_edit(text):
         try:
@@ -603,23 +698,21 @@ async def start_download(client, query, saved):
                         )
 
                         start_time = time.time()
-
-                        async def _gofile_progress(current, total):
-                            await progress_for_pyrogram(
-                                current,
-                                total,
-                                "📤 <b>Uploading To Gofile...</b>",
-                                query.message,
-                                start_time,
-                            )
+                        _gofile_progress = make_gofile_progress_cb(query.message, start_time)
+                        LOGGER.info(
+                            "Uploading to gofile: name=%s size=%s user=%s",
+                            file_name, size, query.from_user.id,
+                        )
 
                         try:
                             data = await upload_to_gofile(
                                 file_path,
                                 on_progress=_gofile_progress,
                                 token=GOFILE_TOKEN,
+                                poll_interval=2.0,
                             )
                         except Exception as e:
+                            LOGGER.exception("Gofile upload failed for %s", file_name)
                             await safe_reply(
                                 f"<b>❌ Gofile Upload Failed</b>\n\n"
                                 f"<b>📁 File:</b> <code>{file_name}</code>\n"
@@ -742,9 +835,28 @@ async def all_select_callbacks(client, query):
 
             rows.append([
                 InlineKeyboardButton("⏭ Skip Audio", callback_data=f"select_skip_{msg_id}"),
-                InlineKeyboardButton("🚀 Download", callback_data=f"select_done_{msg_id}")
+                InlineKeyboardButton("🚀 Next", callback_data=f"select_done_{msg_id}")
             ])
             return InlineKeyboardMarkup(rows)
+
+        def build_format_buttons(msg_id):
+            return InlineKeyboardMarkup([
+                [
+                    InlineKeyboardButton("🎬 MP4", callback_data=f"select_format_{msg_id}_mp4"),
+                    InlineKeyboardButton("🎞️ MKV", callback_data=f"select_format_{msg_id}_mkv"),
+                ]
+            ])
+
+        async def show_format_step():
+            try:
+                await query.message.edit_text(
+                    "<b>📦 Choose Output Format</b>\n\n"
+                    "<i>🎬 MP4 — Most Compatible, Plays Everywhere\n"
+                    "🎞️ MKV — Flexible Container, Preserves Multiple Audio Tracks Well</i>",
+                    reply_markup=build_format_buttons(msg_id),
+                )
+            except Exception:
+                pass
 
         if action == "video":
             fid = "_".join(parts[3:])
@@ -753,14 +865,14 @@ async def all_select_callbacks(client, query):
 
             if not audios:
                 saved["selected_audio"] = []
-                return await start_download(client, query, saved)
+                return await show_format_step()
 
             if "selected_audio" not in saved or not isinstance(saved["selected_audio"], list):
                 first_audio = audios[0][0] if audios else None
                 saved["selected_audio"] = [first_audio] if first_audio else []
 
             if len(audios) == 1:
-                return await start_download(client, query, saved)
+                return await show_format_step()
 
             return await query.message.edit_reply_markup(build_audio_buttons(msg_id, audios, saved["selected_audio"]))
 
@@ -779,12 +891,19 @@ async def all_select_callbacks(client, query):
 
         elif action == "skip":
             saved["selected_audio"] = []
-            return await start_download(client, query, saved)
+            return await show_format_step()
 
         elif action == "done":
             if "selected_audio" not in saved or not isinstance(saved["selected_audio"], list):
                 saved["selected_audio"] = []
 
+            return await show_format_step()
+
+        elif action == "format":
+            chosen = "_".join(parts[3:]).lower()
+            if chosen not in ("mp4", "mkv"):
+                chosen = "mp4"
+            saved["selected_format"] = chosen
             return await start_download(client, query, saved)
 
         else:
@@ -866,7 +985,7 @@ async def dkbotz_handle_link(client, message):
         return await checking.edit_text("<b>❌ Failed To Read Formats</b>")
 
     USER_DATA.setdefault(message.from_user.id, {})
-    USER_DATA[message.from_user.id][message.id] = {"url": url, "download_url": download_url, "title": full_title, "thumb": thumb, "videos": videos, "audios": audios, "selected_video": None, "selected_audio": audios[0][0] if audios else None}
+    USER_DATA[message.from_user.id][message.id] = {"url": url, "download_url": download_url, "title": full_title, "thumb": thumb, "videos": videos, "audios": audios, "selected_video": None, "selected_audio": audios[0][0] if audios else None, "selected_format": "mp4"}
 
     btn = []
     for fid, q in videos[:25]:
