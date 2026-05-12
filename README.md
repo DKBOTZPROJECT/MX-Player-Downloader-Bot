@@ -8,7 +8,9 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 * ⚡ Fast Processing & High-Speed Downloads
 * 📥 Automatic Link Detection & Fetching
 * 📤 Direct Upload To Telegram
+* 📦 Output Format Choice (MP4 / MKV) Before Each Download
 * ☁️ Automatic Gofile.io Fallback For Files Larger Than Telegram's 2 GB Limit
+* 📜 /logs Admin Command To Inspect The Live Bot Log File
 * 🧠 Smart Error Handling & Retry System
 * 📊 Clean And User-Friendly Experience
 
@@ -38,6 +40,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 | DATABASE_NAME    | Database Name (default: DKBOTZMXDOWNLOADER)        |
 | TG_UPLOAD_LIMIT  | Max Bytes To Upload To Telegram Before Falling Back To Gofile (default: 2147483648 = 2 GiB) |
 | GOFILE_TOKEN     | Optional Gofile.io Account Token (default: guest uploads) |
+| LOG_FILE         | Path For The Bot Log File Used By /logs (default: bot.log) |
 
 </details>
 
@@ -107,8 +110,15 @@ bash start.sh
 
 1. Copy The MX Player Video Link
 2. Send It To The Bot
-3. Wait A Few Seconds
-4. Get Your Video Ready To Download 🎉
+3. Pick The Video Quality
+4. Pick The Audio Track(s) (Optional)
+5. Choose The Output Format (🎬 MP4 Or 🎞️ MKV)
+6. Wait A Few Seconds
+7. Get Your Video Ready To Download 🎉 (Or A Gofile Link For Files > 2 GB)
+
+### Admin Commands
+
+* `/logs` — Reply With The Live Bot Log File (Restricted To `ADMINS`)
 
 ---
 

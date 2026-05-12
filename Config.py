@@ -66,3 +66,6 @@ TG_UPLOAD_LIMIT = get_size(os.environ.get("TG_UPLOAD_LIMIT", ""), 2 * 1024 * 102
 
 # Optional gofile.io account token. When unset, gofile guest uploads are used.
 GOFILE_TOKEN = os.environ.get("GOFILE_TOKEN", "").strip() or None
+
+# Path to the bot log file. /logs sends this file to admins.
+LOG_FILE = os.environ.get("LOG_FILE", "bot.log")
