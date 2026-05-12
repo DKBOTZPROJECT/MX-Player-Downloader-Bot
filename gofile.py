@@ -1,25 +1,34 @@
 """Gofile.io upload helper used when a file is larger than Telegram's upload limit."""
 
 import asyncio
+import io
 import json
 import os
+from typing import Optional
 
 import aiohttp
+from aiohttp.payload import IOBasePayload, payload_type
 
 GOFILE_SERVERS_URL = "https://api.gofile.io/servers"
 
 
-class _ProgressFile:
+class _ProgressFile(io.RawIOBase):
     """Synchronous file wrapper that records bytes read in a shared state dict.
+
+    Inherits from ``io.RawIOBase`` so that ``aiohttp.FormData`` recognises it
+    as a payload via the registered ``_ProgressFilePayload`` factory below.
 
     aiohttp reads file-like payloads from a default executor thread, so the
     callback used for progress runs on the event loop side via a polling task
-    (see `upload_to_gofile`) to avoid cross-thread coroutine scheduling.
+    (see :func:`upload_to_gofile`) to avoid cross-thread coroutine scheduling.
     """
 
-    def __init__(self, path, state):
+    def __init__(self, path: str, state: dict, total: int):
+        super().__init__()
         self._fp = open(path, "rb")
         self._state = state
+        self._total = total
+        self.name = path
 
     def read(self, size=-1):
         chunk = self._fp.read(size)
@@ -27,11 +36,24 @@ class _ProgressFile:
             self._state["read"] += len(chunk)
         return chunk
 
-    def close(self):
+    def readable(self) -> bool:
+        return True
+
+    def close(self) -> None:
         try:
             self._fp.close()
         except Exception:
             pass
+        super().close()
+
+
+@payload_type(_ProgressFile)
+class _ProgressFilePayload(IOBasePayload):
+    """Payload factory that exposes the wrapped file's total size to aiohttp."""
+
+    @property
+    def size(self) -> Optional[int]:
+        return getattr(self._value, "_total", None)
 
 
 async def _get_server(session, token=None, zone=None):
@@ -116,7 +138,7 @@ async def upload_to_gofile(file_path, on_progress=None, token=None, zone=None, p
             headers["Authorization"] = f"Bearer {token}"
 
         progress_task = asyncio.create_task(_poll_progress())
-        f = _ProgressFile(file_path, state)
+        f = _ProgressFile(file_path, state, total)
         try:
             form = aiohttp.FormData()
             if token:
