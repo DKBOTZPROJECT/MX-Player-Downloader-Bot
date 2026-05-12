@@ -64,6 +64,15 @@
       "description": "Database Name (default: DKBOTZMXDOWNLOADER)",
       "required": false,
       "value": "DKBOTZMXDOWNLOADER"
+    },
+    "TG_UPLOAD_LIMIT": {
+      "description": "Max Bytes To Upload To Telegram Before Falling Back To Gofile (default: 2147483648 = 2 GiB)",
+      "required": false,
+      "value": "2147483648"
+    },
+    "GOFILE_TOKEN": {
+      "description": "Optional Gofile.io Account Token (default: guest uploads)",
+      "required": false
     }
   },
   "buildpacks": [

@@ -8,6 +8,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 * ⚡ Fast Processing & High-Speed Downloads
 * 📥 Automatic Link Detection & Fetching
 * 📤 Direct Upload To Telegram
+* ☁️ Automatic Gofile.io Fallback For Files Larger Than Telegram's 2 GB Limit
 * 🧠 Smart Error Handling & Retry System
 * 📊 Clean And User-Friendly Experience
 
@@ -35,6 +36,8 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 | ADMINS           | Space Separated Admin User IDs                     |
 | DATABASE_URL     | MongoDB Database URL                               |
 | DATABASE_NAME    | Database Name (default: DKBOTZMXDOWNLOADER)        |
+| TG_UPLOAD_LIMIT  | Max Bytes To Upload To Telegram Before Falling Back To Gofile (default: 2147483648 = 2 GiB) |
+| GOFILE_TOKEN     | Optional Gofile.io Account Token (default: guest uploads) |
 
 </details>
 

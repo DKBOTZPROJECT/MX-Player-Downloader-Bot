@@ -6,6 +6,12 @@ def get_int(value):
     except:
         return None
 
+def get_size(value, default):
+    try:
+        return int(value)
+    except:
+        return default
+
 def validate_channel(value):
     if not value:
         return None
@@ -53,3 +59,10 @@ ADMINS = get_admins(os.environ.get("ADMINS", "943270135 943270132"))
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 DATABASE_NAME = os.environ.get("DATABASE_NAME", "DKBOTZMXDOWNLOADER")
+
+# Telegram free-account bot upload limit. Files larger than this are sent to
+# gofile.io instead of being uploaded directly to Telegram. Defaults to 2 GiB.
+TG_UPLOAD_LIMIT = get_size(os.environ.get("TG_UPLOAD_LIMIT", ""), 2 * 1024 * 1024 * 1024)
+
+# Optional gofile.io account token. When unset, gofile guest uploads are used.
+GOFILE_TOKEN = os.environ.get("GOFILE_TOKEN", "").strip() or None
