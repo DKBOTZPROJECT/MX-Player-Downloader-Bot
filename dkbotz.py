@@ -18,6 +18,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from Config import *
 from fsub import ForceSub
+from gofile import upload_to_gofile
 
 USER_DATA = {}
 
@@ -270,6 +271,33 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
                                reply_markup=reply_markup)
         except:
             pass
+
+def rename_replace_spaces(file_path):
+    """Rename the file so spaces in its basename become dots.
+
+    Returns the new path. If the rename is unnecessary or fails, the original
+    path is returned unchanged.
+    """
+    try:
+        folder = os.path.dirname(file_path)
+        name = os.path.basename(file_path)
+        if " " not in name:
+            return file_path
+
+        new_name = re.sub(r"\s+", ".", name).strip(".")
+        if not new_name or new_name == name:
+            return file_path
+
+        new_path = os.path.join(folder, new_name)
+        if os.path.exists(new_path):
+            base, ext = os.path.splitext(new_name)
+            suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            new_path = os.path.join(folder, f"{base}.{suffix}{ext}")
+
+        os.rename(file_path, new_path)
+        return new_path
+    except Exception:
+        return file_path
 
 async def remove_file(file_path):
     try:
@@ -557,8 +585,94 @@ async def start_download(client, query, saved):
 
             await safe_edit(f"<b>✅ Download Completed</b>\n\n<b>📁 Total Files:</b> <code>{len(files)}</code>\n<b>🎵 Audio Tracks:</b> <code>{len(a)}</code>\n\n<b>🚀 Uploading Starting...</b>")
             for file_path in files:
+                dkthumbs = None
                 try:
                     size = os.path.getsize(file_path)
+
+                    if size > TG_UPLOAD_LIMIT:
+                        file_path = rename_replace_spaces(file_path)
+                        file_name = os.path.basename(file_path)
+                        file_size = humanbytes(size)
+                        limit_size = humanbytes(TG_UPLOAD_LIMIT)
+
+                        await safe_edit(
+                            f"<b>📤 Uploading To Gofile...</b>\n\n"
+                            f"<b>📁 Name:</b> <code>{file_name}</code>\n"
+                            f"<b>📦 Size:</b> <code>{file_size}</code>\n"
+                            f"<b>ℹ️ Reason:</b> Larger Than Telegram Limit (<code>{limit_size}</code>)"
+                        )
+
+                        start_time = time.time()
+
+                        async def _gofile_progress(current, total):
+                            await progress_for_pyrogram(
+                                current,
+                                total,
+                                "📤 <b>Uploading To Gofile...</b>",
+                                query.message,
+                                start_time,
+                            )
+
+                        try:
+                            data = await upload_to_gofile(
+                                file_path,
+                                on_progress=_gofile_progress,
+                                token=GOFILE_TOKEN,
+                            )
+                        except Exception as e:
+                            await safe_reply(
+                                f"<b>❌ Gofile Upload Failed</b>\n\n"
+                                f"<b>📁 File:</b> <code>{file_name}</code>\n"
+                                f"<b>⚠️ Error:</b> <code>{str(e)[:300]}</code>"
+                            )
+                            await remove_file(file_path)
+                            continue
+
+                        download_page = data.get("downloadPage") or data.get("downloadpage") or ""
+
+                        caption = (
+                            f"<b>📤 Uploaded To Gofile</b>\n\n"
+                            f"<b>📁 Name:</b> <code>{file_name}</code>\n"
+                            f"<b>📦 Size:</b> <code>{file_size}</code>\n"
+                            f"<b>🔗 Link:</b> {download_page or 'Unavailable'}"
+                        )
+
+                        gofile_buttons = None
+                        if download_page:
+                            gofile_buttons = InlineKeyboardMarkup([
+                                [InlineKeyboardButton("📥 Download From Gofile", url=download_page)]
+                            ])
+
+                        dkcopy = await client.send_message(
+                            chat_id=query.message.chat.id,
+                            text=caption,
+                            reply_markup=gofile_buttons,
+                            disable_web_page_preview=True,
+                        )
+
+                        if LOG_CHANNEL:
+                            user = query.from_user
+                            log_msg = (
+                                f"📥 <b>New Gofile Upload</b>\n"
+                                f"👤 <b>User:</b> {user.mention if user else 'Unknown'}\n"
+                                f"🆔 <b>ID:</b> <code>{user.id if user else 0}</code>\n"
+                                f"📛 <b>Username:</b> {'@'+user.username if user and user.username else 'No Username'}"
+                            )
+                            try:
+                                log = await dkcopy.copy(LOG_CHANNEL)
+                                await log.reply(log_msg)
+                            except Exception:
+                                pass
+
+                        await safe_edit(
+                            f"<b>✅ Gofile Upload Done</b>\n\n"
+                            f"<b>📁 Name:</b> <code>{file_name}</code>\n"
+                            f"<b>📦 Size:</b> <code>{file_size}</code>"
+                        )
+                        await asyncio.sleep(2)
+                        await remove_file(file_path)
+                        continue
+
                     file_name = os.path.basename(file_path)
                     file_size = humanbytes(size)
                     await safe_edit(f"<b>📤 Uploading File...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
@@ -582,13 +696,13 @@ async def start_download(client, query, saved):
                     await safe_edit(f"<b>📤 Uploading Done...</b>\n\n<b>📁 Name:</b> <code>{file_name}</code>\n<b>📦 Size:</b> <code>{file_size}</code>")
                     await asyncio.sleep(2)
                     await remove_file(file_path)
-                    if thumbnail:
+                    if thumbnail and dkthumbs:
                         await remove_file(dkthumbs)
 
                 except Exception as e:
                     await safe_reply(f"<b>❌ Upload Failed</b>\n\n<b>📁 File:</b> <code>{os.path.basename(file_path)}</code>\n<b>⚠️ Error:</b> <code>{str(e)}</code>")
                     await remove_file(file_path)
-                    if thumbnail:
+                    if thumbnail and dkthumbs:
                         await remove_file(dkthumbs)
 
             await safe_delete()
