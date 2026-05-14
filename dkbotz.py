@@ -426,6 +426,8 @@ async def start_download(client, query, saved):
         "--restrict-filenames",
         url
     ]
+    if len(a) > 1:
+        cmd.extend(["--audio-multistreams"])
 
     async def safe_edit(text):
         try:
