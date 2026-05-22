@@ -18,6 +18,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from Config import *
 from fsub import ForceSub
+from db import *
 
 USER_DATA = {}
 
