@@ -317,6 +317,14 @@ def is_mxplayer_url(url):
 
 @DKBOTZBOT.on_message(filters.command("start"))
 async def start_cmd(client, message):
+    user = message.from_user
+    if DB_ENABLED:
+        join = await add_user(user)
+        if join and LOG_CHANNEL:
+            await client.send_message(LOG_CHANNEL, f"🚀 <b>New User Started The Bot</b>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🆔 <b>User ID :</b> <code>{user.id}</code>\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code or 'Unknown'}\n🤖 <b>Bot :</b> {'Yes' if user.is_bot else 'No'}\n⏰ <b>Time :</b> <code>{datetime.now().strftime('%d %B %Y %I:%M:%S %p')}</code>")
+        if await is_banned(user.id):
+            return await message.reply_text("<b>🚫 Sorry, You Are Banned From Using This Bot.</b>")
+
     if not await ForceSub(client, message):
         return
 
@@ -324,6 +332,14 @@ async def start_cmd(client, message):
 
 @DKBOTZBOT.on_message(filters.command("help"))
 async def help_cmd(client, message):
+    user = message.from_user
+    if DB_ENABLED:
+        join = await add_user(user)
+        if join and LOG_CHANNEL:
+            await client.send_message(LOG_CHANNEL, f"🚀 <b>New User Started The Bot</b>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🆔 <b>User ID :</b> <code>{user.id}</code>\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code or 'Unknown'}\n🤖 <b>Bot :</b> {'Yes' if user.is_bot else 'No'}\n⏰ <b>Time :</b> <code>{datetime.now().strftime('%d %B %Y %I:%M:%S %p')}</code>")
+        if await is_banned(user.id):
+            return await message.reply_text("<b>🚫 Sorry, You Are Banned From Using This Bot.</b>")
+
     if not await ForceSub(client, message):
         return
 
@@ -331,6 +347,14 @@ async def help_cmd(client, message):
 
 @DKBOTZBOT.on_message(filters.command("about"))
 async def about_cmd(client, message):
+    user = message.from_user
+    if DB_ENABLED:
+        join = await add_user(user)
+        if join and LOG_CHANNEL:
+            await client.send_message(LOG_CHANNEL, f"🚀 <b>New User Started The Bot</b>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🆔 <b>User ID :</b> <code>{user.id}</code>\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code or 'Unknown'}\n🤖 <b>Bot :</b> {'Yes' if user.is_bot else 'No'}\n⏰ <b>Time :</b> <code>{datetime.now().strftime('%d %B %Y %I:%M:%S %p')}</code>")
+        if await is_banned(user.id):
+            return await message.reply_text("<b>🚫 Sorry, You Are Banned From Using This Bot.</b>")
+
     if not await ForceSub(client, message):
         return
 
@@ -338,6 +362,14 @@ async def about_cmd(client, message):
 
 @DKBOTZBOT.on_message(filters.command("donate"))
 async def donate_cmd(client, message):
+    user = message.from_user
+    if DB_ENABLED:
+        join = await add_user(user)
+        if join and LOG_CHANNEL:
+            await client.send_message(LOG_CHANNEL, f"🚀 <b>New User Started The Bot</b>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🆔 <b>User ID :</b> <code>{user.id}</code>\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code or 'Unknown'}\n🤖 <b>Bot :</b> {'Yes' if user.is_bot else 'No'}\n⏰ <b>Time :</b> <code>{datetime.now().strftime('%d %B %Y %I:%M:%S %p')}</code>")
+        if await is_banned(user.id):
+            return await message.reply_text("<b>🚫 Sorry, You Are Banned From Using This Bot.</b>")
+
     if not await ForceSub(client, message):
         return
 
@@ -664,6 +696,14 @@ async def all_select_callbacks(client, query):
 
 @DKBOTZBOT.on_message(filters.text & filters.private)
 async def dkbotz_handle_link(client, message):
+    user = message.from_user
+    if DB_ENABLED:
+        join = await add_user(user)
+        if join and LOG_CHANNEL:
+            await client.send_message(LOG_CHANNEL, f"🚀 <b>New User Started The Bot</b>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🆔 <b>User ID :</b> <code>{user.id}</code>\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code or 'Unknown'}\n🤖 <b>Bot :</b> {'Yes' if user.is_bot else 'No'}\n⏰ <b>Time :</b> <code>{datetime.now().strftime('%d %B %Y %I:%M:%S %p')}</code>")
+        if await is_banned(user.id):
+            return await message.reply_text("<b>🚫 Sorry, You Are Banned From Using This Bot.</b>")
+
     url = message.text.strip()
 
     if not (url.startswith("http://") or url.startswith("https://")):
