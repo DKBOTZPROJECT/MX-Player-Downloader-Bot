@@ -375,6 +375,16 @@ async def donate_cmd(client, message):
 
     await message.reply_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
+@DKBOTZBOT.on_message(filters.command("profile") & filters.private)
+async def dkbotz_profile_cmd(client, message):
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    user = message.from_user
+    data = users_col.find_one({"user_id": user.id}) or {}
+
+    await message.reply_text(f"<b>👤 Your Profile</b>\n\n🆔 <b>User ID :</b> <code>{user.id}</code>\n👤 <b>Name :</b> {user.first_name or 'Unknown'} {user.last_name or ''}\n🔗 <b>Username :</b> {'@' + user.username if user.username else 'Not Set'}\n🌍 <b>Language :</b> {user.language_code.upper() if user.language_code else 'Unknown'}\n📦 <b>Total Downloads :</b> <code>{data.get('downloads', 0)}</code>\n🚫 <b>Banned :</b> {'Yes' if data.get('is_banned') else 'No'}")
+
 @DKBOTZBOT.on_message(filters.command("ban"))
 async def dkbotz_ban_cmd(client, message):
     if message.from_user.id not in ADMINS:
