@@ -375,6 +375,132 @@ async def donate_cmd(client, message):
 
     await message.reply_text(DONATE_MESSAGE, reply_markup=START_BUTTONS, disable_web_page_preview=True)
 
+@DKBOTZBOT.on_message(filters.command("ban"))
+async def dkbotz_ban_cmd(client, message):
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("<b>❌ Access Denied</b>")
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    args = message.text.split()
+
+    if len(args) < 2 or not args[1].isdigit():
+        return await message.reply_text("<b>Usage :</b> <code>/ban user_id</code>")
+
+    uid = int(args[1])
+
+    if await ban_user(uid):
+        await message.reply_text(f"<b>✅ User Banned Successfully</b>\n🆔 <code>{uid}</code>")
+
+        if LOG_CHANNEL:
+            try:
+                await client.send_message(LOG_CHANNEL, f"🚫 <b>User Banned</b>\n🆔 <b>User ID :</b> <code>{uid}</code>\n👮 <b>Banned By :</b> {message.from_user.mention}")
+            except Exception:
+                pass
+
+    else:
+        await message.reply_text(f"<b>⚠️ Unable To Ban User</b>\n🆔 <code>{uid}</code>")
+
+
+@DKBOTZBOT.on_message(filters.command("unban"))
+async def dkbotz_unban_cmd(client, message):
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("<b>❌ Access Denied</b>")
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    args = message.text.split()
+
+    if len(args) < 2 or not args[1].isdigit():
+        return await message.reply_text("<b>Usage :</b> <code>/unban user_id</code>")
+
+    uid = int(args[1])
+
+    if await unban_user(uid):
+        await message.reply_text(f"<b>✅ User Unbanned Successfully</b>\n🆔 <code>{uid}</code>")
+
+        if LOG_CHANNEL:
+            try:
+                await client.send_message(LOG_CHANNEL, f"✅ <b>User Unbanned</b>\n🆔 <b>User ID :</b> <code>{uid}</code>\n👮 <b>Unbanned By :</b> {message.from_user.mention}")
+            except Exception:
+                pass
+
+    else:
+        await message.reply_text(f"<b>⚠️ User Already Unbanned Or Not Found</b>\n🆔 <code>{uid}</code>")
+
+
+@DKBOTZBOT.on_message(filters.command("broadcast"))
+async def dkbotz_broadcast_cmd(client, message):
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("<b>❌ Access Denied</b>")
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    bc_msg = message.reply_to_message
+
+    if not bc_msg:
+        return await message.reply_text("<b>📢 Reply To A Message To Broadcast.</b>")
+
+    users = await get_all_users()
+    total = len(users)
+
+    if not total:
+        return await message.reply_text("<b>⚠️ No Users Found.</b>")
+
+    status = await message.reply_text(f"<b>📢 Broadcasting Message To {total} Users...</b>")
+
+    success = 0
+    failed = 0
+
+    for uid in users:
+        try:
+            await bc_msg.copy(uid)
+            success += 1
+
+        except FloodWait as e:
+            await asyncio.sleep(e.value)
+
+            try:
+                await bc_msg.copy(uid)
+                success += 1
+            except Exception:
+                failed += 1
+
+        except Exception:
+            failed += 1
+
+        await asyncio.sleep(1)
+
+    await status.edit_text(f"<b>📢 Broadcast Completed</b>\n\n✅ <b>Success :</b> <code>{success}</code>\n❌ <b>Failed :</b> <code>{failed}</code>\n👥 <b>Total Users :</b> <code>{total}</code>")
+
+
+@DKBOTZBOT.on_message(filters.command("stats"))
+async def dkbotz_stats_cmd(client, message):
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("<b>❌ Access Denied</b>")
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    s = await get_stats()
+
+    if not s:
+        return await message.reply_text("<b>⚠️ Unable To Fetch Statistics.</b>")
+
+    await message.reply_text(f"<b>📊 DKBOTZBOT Statistics</b>\n\n👥 <b>Total Users :</b> <code>{s.get('total_users', 0)}</code>\n✅ <b>Active Users :</b> <code>{s.get('active_users', 0)}</code>\n🚫 <b>Banned Users :</b> <code>{s.get('banned_users', 0)}</code>\n🆕 <b>New Users Today :</b> <code>{s.get('new_today', 0)}</code>\n📦 <b>Total Downloads :</b> <code>{s.get('total_downloads', 0)}</code>")
+
+
+@DKBOTZBOT.on_message(filters.command("users"))
+async def dkbotz_users_cmd(client, message):
+    if message.from_user.id not in ADMINS:
+        return await message.reply_text("<b>❌ Access Denied</b>")
+    if not DB_ENABLED:
+        return await message.reply_text("<b>⚠️ Database Not Enabled.</b>")
+
+    s = await get_stats()
+
+    await message.reply_text(f"<b>👥 DKBOTZBOT User Summary</b>\n\n👤 <b>Total Users :</b> <code>{s.get('total_users', 0)}</code>\n✅ <b>Active Users :</b> <code>{s.get('active_users', 0)}</code>\n🚫 <b>Banned Users :</b> <code>{s.get('banned_users', 0)}</code>\n🆕 <b>Joined Today :</b> <code>{s.get('new_today', 0)}</code>")
+
+
 @DKBOTZBOT.on_callback_query(filters.regex("^dkbotzmsg_"))
 async def callback_handler(client, query):
     data = query.data
