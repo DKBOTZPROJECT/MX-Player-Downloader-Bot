@@ -584,6 +584,7 @@ async def start_download(client, query, saved):
                     start_time = time.time()
                     caption = f"<b>📁 Name:</b> <code><b>{file_name}</code>\n\n<b>📦 Size:</b> <code>{file_size}</code>"
                     dkcopy = await client.send_video(chat_id=query.message.chat.id, video=file_path, caption=caption, duration=duration if duration > 0 else None, width=width if width > 0 else None, height=height if height > 0 else None, thumb=dkthumbs if dkthumbs else None, progress=progress_for_pyrogram, progress_args=("📤 <b>Uploading Video...</b>", query.message, start_time))
+                    await increment_downloads(query.from_user.id)
                     
                     if LOG_CHANNEL:
                         user = query.from_user
