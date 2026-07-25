@@ -303,7 +303,7 @@ async def remove_folder(folder_path):
 
 async def mx_player_request_api(url):
     # You Can OWN Your API From Here: https://t.me/DKBOTZPRO/14
-    api_url = f"https://ott.dkbotzpro.in/mxplayer?url={url}"
+    api_url = f"https://ott.dkbotzpro.in/mxplayer?api_key={MX_PLAYER_API_KEY}&url={url}"
     for _ in range(3):
         try:
             response = requests.get(api_url, timeout=10)
