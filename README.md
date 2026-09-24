@@ -109,6 +109,35 @@ bash start.sh
 
 ---
 
+## 🔑 How To Own Your API
+
+This Bot Uses An API To Fetch MX Player Data. By Default, A **Shared API key** is Used, So You May Sometimes Face Speed Or Request Limit issues. Get Your Own **Private API** For A Faster And More Stable Experience.
+
+### 🌟 MX Player Pro API V2 🌟
+
+🔗 **Demo:** [MX Player Pro API V2](https://ott.dkbotzpro.in/mxplayer?url=https%3A%2F%2Fwww.mxplayer.in%2Fshow%2Fdetail%2Fepisode%2F584ff3745eba1b08dd0c11db3e34ee96&api_key=56JPX-2YUG0-CFWWX-6JMFI)
+
+### 💰 Plans
+
+| Plan | Price | What You Get |
+| ---- | ----- | ------------ |
+| 🔥 **Pro API V2 (Full Package)** | **₹499** | Full Setup Guide, Complete installation & Configuration Support, Easy Setup & Run Process, Warranty Support, No Hidden Code, Ready-To-Use Solution |
+| 🔑 **API Key Only** | **₹400** (♾️ Lifetime) | API Key Only, One-Time Payment, Permanent Use |
+
+### 🛒 How To Buy
+
+1. 👉 Message On Telegram: [**@DKBOTZHELP_4**](https://t.me/DKBOTZHELP_4)
+2. Tell Your Plan (**Pro API V2** or **API Key Only**)
+3. Get The Payment Details From The Seller, Pay, And Send The Payment Screenshot
+4. After Payment Confirmation, You Will Receive Your API Key / Setup Details
+5. Set The Key in The Bot And Start The bot 🎉
+
+<a href="https://t.me/DKBOTZHELP_4?text=Hi%2C%20I%20want%20to%20buy%20MX%20Player%20API">
+  <img src="https://img.shields.io/badge/Buy%20Now-Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Buy On Telegram">
+</a>
+
+---
+
 ## 🐞 Report Issues / Request Features
 
 If You Face Any Issues Or Want New Features, You Can:
