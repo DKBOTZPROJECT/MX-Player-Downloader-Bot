@@ -39,6 +39,8 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
 MX_PLAYER_API_KEY = os.environ.get("MX_PLAYER_API_KEY", "56JPX-2YUG0-CFWWX-6JMFI")
 
+CONCURRENT_FRAGMENTS = get_int(os.environ.get("CONCURRENT_FRAGMENTS", "16"))
+
 OWNER_USERNAME = validate_username(os.environ.get("OWNER_USERNAME", ""), "DKBOTZHELP")
 UPI_ID = os.environ.get("UPI_ID", "dkbotzpro@ybl")
 
