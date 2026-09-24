@@ -138,6 +138,39 @@ This Bot Uses An API To Fetch MX Player Data. By Default, A **Shared API key** i
 
 ---
 
+### ⚙️ How To Add Your API Key
+
+`MX_PLAYER_API_KEY` is A **Required** Variable.
+
+```python
+api_url = f"https://ott.dkbotzpro.in/mxplayer?api_key={MX_PLAYER_API_KEY}&url={url}"
+```
+
+**Option 1: Environment Variable (Recommended)**
+
+* **Heroku:** App → Settings → Config Vars → `MX_PLAYER_API_KEY` = `your_api_key`
+* **VPS:**
+
+```bash
+export MX_PLAYER_API_KEY=your_api_key
+bash start.sh
+```
+
+**Option 2: Directly In Code** (`Config.py`)
+
+```python
+MX_PLAYER_API_KEY = os.environ.get("MX_PLAYER_API_KEY", "your_api_key")
+```
+
+> ⚠️ Do Not Share Your API key With Anyone, And Do Not Dardcode It in A Public GitHub Repository. Using An environment Variable is Safer.
+
+### ✉️ Interested?
+
+Contact For More Details & Purchase information.
+
+✈️ **Username:** [@DKBOTZHELP_4](https://t.me/DKBOTZHELP_4) ❤️
+
+---
 ## 🐞 Report Issues / Request Features
 
 If You Face Any Issues Or Want New Features, You Can:
