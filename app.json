@@ -28,6 +28,10 @@
       "description": "Your Telegram Bot Token. Get From @BotFather On Telegram",
       "required": true
     },
+    "MX_PLAYER_API_KEY": {
+      "description": "Your MX Player API Key. Buy From @DKBOTZHELP_4",
+      "required": true
+    },
     "OWNER_USERNAME": {
       "description": "Bot Owner Username (default: DKBOTZHELP)",
       "required": false,
