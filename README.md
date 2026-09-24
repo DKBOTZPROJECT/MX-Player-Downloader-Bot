@@ -19,6 +19,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 | API_ID    | Get From https://my.telegram.org |
 | API_HASH  | Get From https://my.telegram.org |
 | BOT_TOKEN | Get From @BotFather              |
+| MX_PLAYER_API_KEY | Your MX Player API Key ([How To Get](#-how-to-own-your-api)) |
 
 <details>
 <summary>🧩 Optional Variables</summary>
@@ -35,6 +36,7 @@ MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily 
 | ADMINS           | Space Separated Admin User IDs                     |
 | DATABASE_URL     | MongoDB Database URL                               |
 | DATABASE_NAME    | Database Name (default: DKBOTZMXDOWNLOADER)        |
+| CONCURRENT_FRAGMENTS | Parallel Download Connections (default: 16) |
 
 </details>
 
