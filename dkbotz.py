@@ -576,6 +576,10 @@ async def start_download(client, query, saved):
         "--progress",
         "--no-warnings",
         "--restrict-filenames",
+        "-N", str(CONCURRENT_FRAGMENTS),
+        "--retries", "10",
+        "--fragment-retries", "10",
+        "--socket-timeout", "30",
         url
     ]
     if len(a) > 1:
