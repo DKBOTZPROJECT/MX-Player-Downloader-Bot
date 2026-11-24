@@ -2,6 +2,10 @@
 
 MX Player Downloader Bot Is A Powerful Telegram Bot That Allows Users To Easily Download Videos From MX Player. Simply Send The Video Link, And The Bot Will Automatically Fetch And Upload It To Telegram.
 
+## Repository Maintenance Notice
+
+This Repository Is No Longer Actively Maintained, As MX Player Has Been Integrated Into Amazon. Therefore, No Further Updates Or Maintenance Are Expected.
+
 ## ✨ Features
 
 * 🎬 Download Videos From MX Player Links
